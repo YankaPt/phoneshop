@@ -53,9 +53,12 @@
                     <td>${phone.displaySizeInches}"</td>
                     <td>$ ${phone.price}</td>
                     <td>
-                        <input type="text" class="quantityField" id=quantity${phone.id} name="quantity${phone.id}" style="text-align: right" value="${cartItems.get(status.index).quantity}"/>
+                        <input type="text" class="quantityField" id=quantity${phone.id} name="quantity${phone.id}"
+                               style="text-align: right" value="${cartItems.get(status.index).quantity}"/>
                         <br>
-                        <label for=quantity${phone.id} id=label${phone.id}></label>
+                        <c:if test="${errors.containsKey(phone.id)}">
+                            <label for=quantity${phone.id} style="color: red" id=label${phone.id}>${errors.get(phone.id)}</label>
+                        </c:if>
                     </td>
                     <td>
                         <input type="hidden" disabled id="delete${phone.id}" name="delete">

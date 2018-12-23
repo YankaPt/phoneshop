@@ -9,8 +9,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;

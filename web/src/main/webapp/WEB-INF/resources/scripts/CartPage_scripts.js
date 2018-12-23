@@ -4,7 +4,8 @@ function deleteItem(phoneId) {
 }
 function update() {
     [].forEach.call(document.getElementsByClassName("quantityField"), function (element) {
-
-        document.getElementById("updateSubmit").appendChild(element.cloneNode());
+        var clonedElement = element.cloneNode();
+        clonedElement.setAttribute("name", element.getAttribute("name").substring(8));
+        document.getElementById("updateSubmit").appendChild(clonedElement);
     });
 }
