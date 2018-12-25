@@ -65,7 +65,7 @@ public class AjaxCartController {
     public Map<String, Object> handle() {
         Locale locale = LocaleContextHolder.getLocale();
         Map<String, Object> response = new HashMap<>();
-        response.put("message", messageSource.getMessage("invalidInputMessage", null, locale));
+        response.put("message", messageSource.getMessage("quantity.NAN", null, locale));
         return response;
     }
 }

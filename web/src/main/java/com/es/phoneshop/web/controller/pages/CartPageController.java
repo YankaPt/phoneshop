@@ -8,8 +8,8 @@ import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.validators.CartValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
@@ -29,14 +29,16 @@ public class CartPageController {
     private final TotalPriceService totalPriceService;
     private final PhoneService phoneService;
     private final CartValidator cartValidator;
+    private final MessageSource messageSource;
     private Errors errors;
 
     @Autowired
-    public CartPageController(CartService cartService, TotalPriceService totalPriceService, PhoneService phoneService, CartValidator cartValidator) {
+    public CartPageController(CartService cartService, TotalPriceService totalPriceService, PhoneService phoneService, CartValidator cartValidator, MessageSource messageSource) {
         this.cartService = cartService;
         this.totalPriceService = totalPriceService;
         this.phoneService = phoneService;
         this.cartValidator = cartValidator;
+        this.messageSource = messageSource;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -86,14 +88,14 @@ public class CartPageController {
         });
         return result;
     }
-
+/*
     @ExceptionHandler({NumberFormatException.class})
     public Map<String, Object> handle() {
         Locale locale = LocaleContextHolder.getLocale();
         Map<String, Object> response = new HashMap<>();
         //response.put("message", messageSource.getMessage("invalidInputMessage", null, locale));
         return response;
-    }
+    }*/
 
     List<CartItemWithQuantityAsString> convertCartItemsMapToList(Map<String, String[]> map) {
         List<CartItemWithQuantityAsString> list = new ArrayList<>();
@@ -106,9 +108,10 @@ public class CartPageController {
     }
 
     Map<Long, String> localizeErrors(Errors errors) {
+        Locale locale = LocaleContextHolder.getLocale();
         Map<Long, String> localizeErrors = new HashMap<>();
         errors.getAllErrors().forEach((objectError -> {
-            localizeErrors.put(Long.parseLong(objectError.getCode().substring(8)), objectError.getDefaultMessage());
+            localizeErrors.put(Long.parseLong(objectError.getCode().substring(8)), messageSource.getMessage(objectError.getDefaultMessage(), null, locale));
         }));
         return localizeErrors;
     }
