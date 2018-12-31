@@ -22,7 +22,7 @@ public class JdbcProductDao implements PhoneDao {
     private static final String SQL_FOR_GETTING_AVAILABLE_PHONES_BY_OFFSET_AND_LIMIT = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones join stocks on phones.id=stocks.phoneId where stocks.stock > 0 and phones.price is not null offset ? limit ?)";
     private static final String SQL_FOR_GETTING_COLORS_BY_PHONE_ID = "select * from phone2color where phone2color.phoneId = ?";
     private static final String SQL_FOR_GETTING_TOTAL_AMOUNT_OF_AVAILABLE = "select count(*) from phones join stocks on phones.id=stocks.phoneId where stocks.stock> 0 and phones.price is not null";
-    private static final String SQL_FOR_GETTING_PHONES_BY_KEYWORD = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones where brand like ? or model like ?)";
+    private static final String SQL_FOR_GETTING_PHONES_BY_KEYWORD = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones where brand like ? or brand like ? or brand like ? or model like ? or model like ? or model like ?)";
 
     private JdbcTemplate jdbcTemplate;
     private BeanPropertyRowMapper<Phone> phoneBeanPropertyRowMapper = new BeanPropertyRowMapper<>(Phone.class);
@@ -77,9 +77,12 @@ public class JdbcProductDao implements PhoneDao {
 
     @Override
     public List<Phone> findAllByKeyword(String keyword) {
+        keyword = "%"+keyword+"%";
+        StringBuilder keywordWithUpperCaseFirstLetter = new StringBuilder(keyword);
+        keywordWithUpperCaseFirstLetter.replace(1, 2, keywordWithUpperCaseFirstLetter.substring(1, 2).toUpperCase());
         List<Phone> phones = new ArrayList<>();
         jdbcTemplate.query(SQL_FOR_GETTING_PHONES_BY_KEYWORD,
-                new PhoneRowMapper(phones, getColors()), keyword, keyword);
+                new PhoneRowMapper(phones, getColors()), keyword, keyword.toUpperCase(), keywordWithUpperCaseFirstLetter.toString(), keyword, keyword.toUpperCase(), keywordWithUpperCaseFirstLetter.toString());
         return phones;
     }
 

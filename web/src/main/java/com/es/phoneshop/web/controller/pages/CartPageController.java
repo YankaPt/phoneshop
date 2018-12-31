@@ -88,14 +88,6 @@ public class CartPageController {
         });
         return result;
     }
-/*
-    @ExceptionHandler({NumberFormatException.class})
-    public Map<String, Object> handle() {
-        Locale locale = LocaleContextHolder.getLocale();
-        Map<String, Object> response = new HashMap<>();
-        //response.put("message", messageSource.getMessage("invalidInputMessage", null, locale));
-        return response;
-    }*/
 
     List<CartItemWithQuantityAsString> convertCartItemsMapToList(Map<String, String[]> map) {
         List<CartItemWithQuantityAsString> list = new ArrayList<>();

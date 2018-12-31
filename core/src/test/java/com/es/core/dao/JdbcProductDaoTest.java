@@ -153,7 +153,7 @@ public class JdbcProductDaoTest {
 
     @Test
     public void shouldFindByBrand() {
-        String keyword = "TestBrand";
+        String keyword = "TestBran";
 
         List<Phone> phones = productDao.findAllByKeyword(keyword);
 
