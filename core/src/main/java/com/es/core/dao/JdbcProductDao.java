@@ -12,13 +12,11 @@ import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//TODO: change color setting logic: replace getColors() with join
 @Repository
 public class JdbcProductDao implements PhoneDao {
     private static final String SQL_QUERY_FOR_GETTING_ALL_COLORS = "select * from colors";
     private static final String SQL_FOR_GETTING_PHONE_BY_ID = "select * from phones where phones.id=?";
     private static final String SQL_FOR_GETTING_LAST_PHONE_ID = "select MAX(id) as lastId from phones";
-    private static final String SQL_FOR_BINDING_PHONE_AND_COLOR = "insert into phone2color values (?,?)";
     private static final String SQL_FOR_GETTING_AVAILABLE_PHONES_BY_OFFSET_AND_LIMIT = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones join stocks on phones.id=stocks.phoneId where stocks.stock > 0 and phones.price is not null offset ? limit ?)";
     private static final String SQL_FOR_GETTING_COLORS_BY_PHONE_ID = "select * from phone2color where phone2color.phoneId = ?";
     private static final String SQL_FOR_GETTING_TOTAL_AMOUNT_OF_AVAILABLE = "select count(*) from phones join stocks on phones.id=stocks.phoneId where stocks.stock> 0 and phones.price is not null";
@@ -35,7 +33,9 @@ public class JdbcProductDao implements PhoneDao {
     public void save(Phone phone) {
         checkPhoneIdAndSetIfNeeded(phone);
         insertPhone(phone);
-        bindPhoneAndColor(phone);
+        if (!phone.getColors().equals(Collections.EMPTY_SET)) {
+            bindPhoneAndColor(phone);
+        }
     }
 
     private void checkPhoneIdAndSetIfNeeded(Phone phone) {
@@ -50,9 +50,16 @@ public class JdbcProductDao implements PhoneDao {
     }
 
     private void bindPhoneAndColor(Phone phone) {
-        if (!phone.getColors().equals(Collections.EMPTY_SET)) {
-            phone.getColors().forEach(color -> jdbcTemplate.update(SQL_FOR_BINDING_PHONE_AND_COLOR, phone.getId(), color.getId()));
-        }
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        simpleJdbcInsert.withTableName("phone2color");
+        ArrayList<Map<String, ?>> batch = new ArrayList<>();
+        phone.getColors().forEach(color -> {
+            Map<String, Object> row = new HashMap<>(2);
+            row.put("phoneId", phone.getId());
+            row.put("colorId", color.getId());
+            batch.add(row);
+        });
+        simpleJdbcInsert.executeBatch((Map<String, ?>[]) batch.toArray());
     }
 
     public Optional<Phone> get(Long key) {
@@ -77,7 +84,7 @@ public class JdbcProductDao implements PhoneDao {
 
     @Override
     public List<Phone> findAllByKeyword(String keyword) {
-        keyword = "%"+keyword+"%";
+        keyword = "%" + keyword + "%";
         StringBuilder keywordWithUpperCaseFirstLetter = new StringBuilder(keyword);
         keywordWithUpperCaseFirstLetter.replace(1, 2, keywordWithUpperCaseFirstLetter.substring(1, 2).toUpperCase());
         List<Phone> phones = new ArrayList<>();
