@@ -9,6 +9,7 @@ import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.validators.CartValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
 
 import java.util.HashMap;
@@ -37,7 +38,8 @@ public class CartPageControllerTest {
     private CartService cartService = mock(CartService.class);
     private PhoneService phoneService = mock(PhoneService.class);
     private TotalPriceService totalPriceService = mock(TotalPriceService.class);
-    private CartPageController controller = new CartPageController(cartService, totalPriceService, phoneService, validator);
+    private MessageSource messageSource = mock(MessageSource.class);
+    private CartPageController controller = new CartPageController(cartService, totalPriceService, phoneService, validator, messageSource);
 
     @Before
     public void setUp() {

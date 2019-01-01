@@ -6,19 +6,17 @@ import com.es.core.model.phone.Phone;
 import com.es.core.services.cart.CartService;
 import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
-import com.es.phoneshop.web.validators.CartValidator;
+import com.es.phoneshop.web.services.CartFormResolver;
+import com.es.phoneshop.web.services.CartItemsConverter;
+import com.es.phoneshop.web.services.ErrorLocalizer;
+import com.es.phoneshop.web.services.ErrorsWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Controller
@@ -28,27 +26,30 @@ public class CartPageController {
     private final CartService cartService;
     private final TotalPriceService totalPriceService;
     private final PhoneService phoneService;
-    private final CartValidator cartValidator;
-    private final MessageSource messageSource;
-    private Errors errors;
+    private final CartFormResolver cartFormResolver;
+    private final ErrorLocalizer errorLocalizer;
+    private final CartItemsConverter cartItemsConverter;
+
 
     @Autowired
-    public CartPageController(CartService cartService, TotalPriceService totalPriceService, PhoneService phoneService, CartValidator cartValidator, MessageSource messageSource) {
+    public CartPageController(CartService cartService, TotalPriceService totalPriceService, PhoneService phoneService, CartFormResolver cartFormResolver, ErrorLocalizer errorLocalizer, CartItemsConverter cartItemsConverter) {
         this.cartService = cartService;
         this.totalPriceService = totalPriceService;
         this.phoneService = phoneService;
-        this.cartValidator = cartValidator;
-        this.messageSource = messageSource;
+        this.cartFormResolver = cartFormResolver;
+        this.errorLocalizer = errorLocalizer;
+        this.cartItemsConverter = cartItemsConverter;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String getCart(Model model) {
         List<Phone> phones = new ArrayList<>();
         List cartItems;
         if (model.containsAttribute("oldCartItems")) {
             cartItems = (List) model.asMap().get("oldCartItems");
             cartItems.forEach(cartItem -> phones.add(phoneService.get(((CartItemWithQuantityAsString) cartItem).getPhoneId()).get()));
-            model.addAttribute("errors", localizeErrors(errors));
+            Map<Long, String> localizedErrors = errorLocalizer.localizeErrors((Errors) model.asMap().get("errors"), (Locale) model.asMap().get("locale"));
+            model.addAttribute("errors", localizedErrors);
         } else {
             cartItems = cartService.getCart().getCartItems();
             cartItems.forEach(cartItem -> phones.add(phoneService.get(((CartItem) cartItem).getPhoneId()).get()));
@@ -61,10 +62,13 @@ public class CartPageController {
     }
 
     @PutMapping
-    public String updateCart(HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        cartService.update(resolveFormData(request.getParameterMap()));
-        List cartItems = convertCartItemsMapToList(request.getParameterMap());
+    public String updateCart(@RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes, Locale locale) {
+        ErrorsWrapper errorsWrapper = new ErrorsWrapper();
+        cartService.update(cartFormResolver.resolveFormData(formData, errorsWrapper));
+        List cartItems = cartItemsConverter.convertCartItemsMapToList(formData);
         redirectAttributes.addFlashAttribute("oldCartItems", cartItems);
+        redirectAttributes.addFlashAttribute("errors", errorsWrapper.getErrors());
+        redirectAttributes.addFlashAttribute("locale", locale);
         return REDIRECTING_ADDRESS;
     }
 
@@ -72,43 +76,5 @@ public class CartPageController {
     public String deleteItem(@RequestParam(value = "delete") Long phoneIdForDelete) {
         cartService.remove(phoneIdForDelete);
         return REDIRECTING_ADDRESS;
-    }
-
-    Map<Long, Integer> resolveFormData(@Validated Map<String, String[]> requestParams) {
-        DataBinder dataBinder = new DataBinder(requestParams);
-        dataBinder.setValidator(cartValidator);
-        dataBinder.validate();
-        errors = dataBinder.getBindingResult();
-        Map<Long, Integer> result = new HashMap<>();
-        requestParams.forEach((paramName, values) -> {
-                if (paramName.matches("\\d*") && values!=null) {
-                    if (errors.getAllErrors().stream().noneMatch(objectError -> objectError.getCode().matches("quantity"+paramName)))
-                    result.put(Long.parseLong(paramName), Integer.parseInt(values[0]));
-                }
-        });
-        return result;
-    }
-
-    List<CartItemWithQuantityAsString> convertCartItemsMapToList(Map<String, String[]> map) {
-        List<CartItemWithQuantityAsString> list = new ArrayList<>();
-        map.forEach((key, value) -> {
-            if (key.matches("\\d*") && value!=null) {
-                list.add(new CartItemWithQuantityAsString(Long.parseLong(key), value[0]));
-            }
-        });
-        return list;
-    }
-
-    Map<Long, String> localizeErrors(Errors errors) {
-        Locale locale = LocaleContextHolder.getLocale();
-        Map<Long, String> localizeErrors = new HashMap<>();
-        errors.getAllErrors().forEach((objectError -> {
-            localizeErrors.put(Long.parseLong(objectError.getCode().substring(8)), messageSource.getMessage(objectError.getDefaultMessage(), null, locale));
-        }));
-        return localizeErrors;
-    }
-
-    Errors getErrors() {
-        return errors;
     }
 }

@@ -15,14 +15,14 @@ public class CartValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        Map<String, String[]> map = (Map<String, String[]>)target;
+        Map<String, String> map = (Map<String, String>)target;
         map.forEach((paramName, values) -> {
             if (paramName.matches("\\d*") && values!=null) {
-                if ("".equals(values[0])) {
+                if ("".equals(values)) {
                     errors.reject("quantity"+paramName, "field.required");
-                } else if (values[0].matches("[-0]+.*")) {
+                } else if (values.matches("[-0]+.*")) {
                     errors.reject("quantity"+paramName, "quantity.negativeOrZero");
-                } else if (values[0].matches(".*\\D+.*")) {
+                } else if (values.matches(".*\\D+.*")) {
                     errors.reject("quantity" + paramName, "quantity.NAN");
                 }
             }

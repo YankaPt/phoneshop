@@ -61,7 +61,7 @@
                         </c:if>
                     </td>
                     <td>
-                        <input type="hidden" disabled id="delete${phone.id}" name="delete">
+                        <input type="hidden" disabled id="delete${phone.id}" name="delete"/>
                         <input type="submit" onclick="deleteItem(${phone.id})" value="Delete"/>
                     </td>
                 </tr>
