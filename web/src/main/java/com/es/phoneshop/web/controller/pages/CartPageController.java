@@ -65,7 +65,7 @@ public class CartPageController {
     public String updateCart(@RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes, Locale locale) {
         ErrorsWrapper errorsWrapper = new ErrorsWrapper();
         cartService.update(cartFormResolver.resolveFormData(formData, errorsWrapper));
-        List cartItems = cartItemsConverter.convertCartItemsMapToList(formData);
+        List<CartItemWithQuantityAsString> cartItems = cartItemsConverter.convertCartItemsMapToList(formData);
         redirectAttributes.addFlashAttribute("oldCartItems", cartItems);
         redirectAttributes.addFlashAttribute("errors", errorsWrapper.getErrors());
         redirectAttributes.addFlashAttribute("locale", locale);

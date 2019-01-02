@@ -49,7 +49,6 @@ public class CartServiceImplTest {
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_PHONES);
         setPhoneParameters(initialPhone, INITIAL_CART_ITEM_PHONE_ID, INITIAL_PHONE_MODEL);
         setPhoneParameters(secondPhone, SECOND_CART_ITEM_PHONE_ID, SECOND_PHONE_MODEL);
-        List<Phone> list = phoneDao.findAllAvailable(0, 5);
         jdbcTemplate.update(SQL_QUERY_FOR_SETTING_STOCK, initialPhone.getId(), INITIAL_STOCK, INITIAL_RESERVED);
         initialCartItem.setPhoneId(initialPhone.getId());
         initialCartItem.setQuantity(INITIAL_RESERVED);

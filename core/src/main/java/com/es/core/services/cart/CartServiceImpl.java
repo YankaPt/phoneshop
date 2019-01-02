@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -42,8 +43,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void remove(Long phoneId) {
-        CartItem removableCartItem = cart.getCartItems().stream().filter(cartItem -> cartItem.getPhoneId().equals(phoneId)).findFirst().get();
-        cart.getCartItems().remove(removableCartItem);
+        Optional<CartItem> removableCartItem = cart.getCartItems().stream().filter(cartItem -> cartItem.getPhoneId().equals(phoneId)).findFirst();
+        removableCartItem.ifPresent(cartItem -> cart.getCartItems().remove(cartItem));
     }
 
     @Override

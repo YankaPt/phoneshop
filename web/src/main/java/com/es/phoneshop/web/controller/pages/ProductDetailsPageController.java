@@ -15,6 +15,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping(value = "/productDetails")
 public class ProductDetailsPageController {
+    private static final String REDIRECTING_TO_404_ADDRESS = "redirect:/404page";
     private final PhoneService phoneService;
     private final CartService cartService;
     private final TotalPriceService totalPriceService;
@@ -34,7 +35,7 @@ public class ProductDetailsPageController {
             Optional<Phone> phone = phoneService.get(phoneId);
             phone.ifPresent(p -> model.addAttribute("phone", p));
         } else {
-            return "redirect:/404page";
+            return REDIRECTING_TO_404_ADDRESS;
         }
         return "productDetails";
     }
