@@ -6,13 +6,14 @@
 <html>
 <head>
     <link rel="stylesheet" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="<c:url value="/resources/styles/cartPage_styles.css"/>">
     <script src="webjars/jquery/3.0.0/jquery.min.js"></script>
     <script src="webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="<c:url value="/resources/scripts/CartPage_scripts.js"/>"></script>
     <title>Product list</title>
 </head>
 <body>
-<div id="cart" style="text-align: right">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
+<div id="cart" class="minicart">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
 <p>
     Hello from Cart!
 </p>
@@ -53,11 +54,11 @@
                     <td>${phone.displaySizeInches}"</td>
                     <td>$ ${phone.price}</td>
                     <td>
-                        <input type="text" class="quantityField" id=quantity${phone.id} name="quantity${phone.id}"
-                               style="text-align: right" value="${cartItems.get(status.index).quantity}"/>
+                        <input type="text" class="quantity-field" id=quantity${phone.id} name="quantity${phone.id}"
+                                value="${cartItems.get(status.index).quantity}"/>
                         <br>
                         <c:if test="${errors.containsKey(phone.id)}">
-                            <label for=quantity${phone.id} style="color: red" id=label${phone.id}>${errors.get(phone.id)}</label>
+                            <label for=quantity${phone.id} class="error-message" id=label${phone.id}>${errors.get(phone.id)}</label>
                         </c:if>
                     </td>
                     <td>
