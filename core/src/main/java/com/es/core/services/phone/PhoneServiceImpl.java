@@ -23,6 +23,11 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
+    public List<Phone> getPhonesWithPositiveStockWithOrderBy(int offset, int limit, String orderBy, boolean isAscend) {
+        return phoneDao.findAllAvailableWithOrderBy(offset, limit, orderBy, isAscend);
+    }
+
+    @Override
     public List<Phone> getPhonesByKeyword(String keyword) {
         return phoneDao.findAllByKeyword(keyword);
     }

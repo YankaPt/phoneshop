@@ -34,3 +34,10 @@ function setLabel(phoneId, quantity, message) {
 function doSearch(searchText) {
     location.href='?search='+searchText
 }
+
+function doSort(pageNumber, orderBy, isAscend, reverseAscend) {
+    if (reverseAscend) {
+        isAscend = !isAscend;
+    }
+    location.href = "?pageNumber="+pageNumber+"&orderBy="+orderBy+"&isAscend="+isAscend;
+}

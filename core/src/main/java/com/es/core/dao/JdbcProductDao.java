@@ -21,6 +21,7 @@ public class JdbcProductDao implements PhoneDao {
     private static final String SQL_FOR_GETTING_COLORS_BY_PHONE_ID = "select * from phone2color where phone2color.phoneId = ?";
     private static final String SQL_FOR_GETTING_TOTAL_AMOUNT_OF_AVAILABLE = "select count(*) from phones join stocks on phones.id=stocks.phoneId where stocks.stock> 0 and phones.price is not null";
     private static final String SQL_FOR_GETTING_PHONES_BY_KEYWORD = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones where brand like ? or brand like ? or brand like ? or model like ? or model like ? or model like ?)";
+    private static final String SQL_FOR_GETTING_AVAILABLE_PHONES_WITH_ORDER_BY = "select * from phones left join phone2color on phones.id = phone2color.phoneId where phones.id in (select phones.id from phones join stocks on phones.id=stocks.phoneId where stocks.stock > 0 and phones.price is not null order by phones.ORDER_BY_STUB ASCEND_STUB offset ? limit ?) order by phones.ORDER_BY_STUB ASCEND_STUB";
 
     private JdbcTemplate jdbcTemplate;
     private BeanPropertyRowMapper<Phone> phoneBeanPropertyRowMapper = new BeanPropertyRowMapper<>(Phone.class);
@@ -30,6 +31,7 @@ public class JdbcProductDao implements PhoneDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public void save(Phone phone) {
         checkPhoneIdAndSetIfNeeded(phone);
         insertPhone(phone);
@@ -62,6 +64,7 @@ public class JdbcProductDao implements PhoneDao {
         simpleJdbcInsert.executeBatch((Map<String, ?>[]) batch.toArray());
     }
 
+    @Override
     public Optional<Phone> get(Long key) {
         Map<Long, Color> colors = getColors();
         Optional<Phone> phone = Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FOR_GETTING_PHONE_BY_ID,
@@ -75,6 +78,16 @@ public class JdbcProductDao implements PhoneDao {
                 new BeanPropertyRowMapper<>(Color.class)).stream().collect(Collectors.toMap(Color::getId, (c) -> c));
     }
 
+    @Override
+    public List<Phone> findAllAvailableWithOrderBy(int offset, int limit, String orderBy, boolean isAscend) {
+        String ascending = isAscend ? "asc" : "desc";
+        List<Phone> phones = new ArrayList<>();
+        jdbcTemplate.query(SQL_FOR_GETTING_AVAILABLE_PHONES_WITH_ORDER_BY.replaceAll("ORDER_BY_STUB", orderBy).replaceAll("ASCEND_STUB", ascending),
+                new PhoneRowMapper(phones, getColors()), offset, limit);
+        return phones;
+    }
+
+    @Override
     public List<Phone> findAllAvailable(int offset, int limit) {
         List<Phone> phones = new ArrayList<>();
         jdbcTemplate.query(SQL_FOR_GETTING_AVAILABLE_PHONES_BY_OFFSET_AND_LIMIT,

@@ -28,12 +28,16 @@ public class ProductListPageService {
         return pageNumber;
     }
 
-    public List<Phone> findPhonesForCurrentPage(Integer pageNumber, Integer amountOfShowedProducts) {
+    public List<Phone> findPhonesForCurrentPage(Integer pageNumber, Integer amountOfShowedProducts, String orderBy, boolean isAscend) {
+        if (!("brand".equals(orderBy) || "model".equals(orderBy) || "price".equals(orderBy) || "displaySizeInches".equals(orderBy))) {
+            orderBy = "brand";
+            isAscend = true;
+        }
         Long totalAmountOfProductsOnStock = phoneService.getTotalAmountOfPhonesWithPositiveStock();
         if (amountOfShowedProducts * (pageNumber - 1) > totalAmountOfProductsOnStock) {
             pageNumber = ((Long) (totalAmountOfProductsOnStock / amountOfShowedProducts)).intValue();
         }
-        return phoneService.getPhonesWithPositiveStock(amountOfShowedProducts * (pageNumber - 1), amountOfShowedProducts);
+        return phoneService.getPhonesWithPositiveStockWithOrderBy(amountOfShowedProducts * (pageNumber - 1), amountOfShowedProducts, orderBy, isAscend);
     }
 
     public List<Phone> findPhonesBySearch(String search) {

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping (value = "/productList")
 public class ProductListPageController {
-    private static final String REDIRECTING_ADDRESS = "redirect:/productList?pageNumber=";
+    private static final String REDIRECTING_ADDRESS = "redirect:/productList?";
     private static final Integer AMOUNT_OF_SHOWED_PRODUCTS = 10;
     private final PhoneService phoneService;
     private final CartService cartService;
@@ -28,22 +28,24 @@ public class ProductListPageController {
     }
 
     @GetMapping()
-    public String showProductList(Integer pageNumber, Boolean previousPage, Boolean nextPage, String search, Model model) {
+    public String showProductList(Integer pageNumber, Boolean previousPage, Boolean nextPage, String search, String orderBy, boolean isAscend, Model model) {
         if (search != null) {
             model.addAttribute("phones", productListPageService.findPhonesBySearch(search));
         } else {
             pageNumber = productListPageService.resolveParamsAndGetPage(pageNumber, previousPage, nextPage);
-            model.addAttribute("phones", productListPageService.findPhonesForCurrentPage(pageNumber, AMOUNT_OF_SHOWED_PRODUCTS));
+            model.addAttribute("phones", productListPageService.findPhonesForCurrentPage(pageNumber, AMOUNT_OF_SHOWED_PRODUCTS, orderBy, isAscend));
         }
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
         model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
         model.addAttribute("maxPageNumber", phoneService.getTotalAmountOfPhonesWithPositiveStock() / AMOUNT_OF_SHOWED_PRODUCTS);
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("orderBy", orderBy);
+        model.addAttribute("isAscend", isAscend);
         return "productList";
     }
 
     @PostMapping()
-    public String doPost(@RequestParam(value = "pageNumber", required = false) Integer pageNumber, String search) {
-        return search == null ? REDIRECTING_ADDRESS + pageNumber : REDIRECTING_ADDRESS + search;
+    public String doPost(@RequestParam(value = "pageNumber", required = false) Integer pageNumber, String search, String orderBy, boolean isAscend) {
+        return search == null ? orderBy == null ? REDIRECTING_ADDRESS + "pageNumber=" + pageNumber : REDIRECTING_ADDRESS + "pageNumber=" + pageNumber + "&orderBy=" + orderBy + "&isAscend=" + isAscend : REDIRECTING_ADDRESS + "search=" + search;
     }
 }
