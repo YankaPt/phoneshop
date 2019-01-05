@@ -90,7 +90,7 @@
             <c:forEach var="phone" items="${phones}">
                 <tr>
                     <td>
-                        <img src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}" href="productDetails?phoneId=${phone.id}">
+                        <a href="productDetails?phoneId=${phone.id}"><img src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}"></a>
                     </td>
                     <td>${phone.brand}</td>
                     <td>${phone.model}</td>
