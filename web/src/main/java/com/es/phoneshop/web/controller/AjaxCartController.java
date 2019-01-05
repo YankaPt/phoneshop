@@ -23,6 +23,7 @@ import java.util.Map;
 @RequestMapping(value = "/ajaxCart")
 public class AjaxCartController {
     private static final String SUCCESS_MESSAGE = "success";
+
     private CartService cartService;
     private TotalPriceService totalPriceService;
     private CartItemValidator cartItemValidator;

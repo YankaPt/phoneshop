@@ -31,11 +31,16 @@
         <form method="post" class="search-form">
             <div class="form-group has-feedback">
                 <label for="search" class="sr-only">Search</label>
-                <input type="text" class="form-control" name="search" id="search" placeholder="search">
+                <input type="text"  class="form-control noEnterSubmit" name="search" id="search" placeholder="search">
                 <span class="glyphicon glyphicon-search form-control-feedback"></span>
                 <button type="button"
                         onclick="doSearch(document.getElementById('search').value)">Search!
                 </button>
+                <script>
+                    $('.noEnterSubmit').keypress(function(e){
+                    if ( e.which == 13 ) e.preventDefault();
+                });
+                </script>
             </div>
         </form>
     </div>

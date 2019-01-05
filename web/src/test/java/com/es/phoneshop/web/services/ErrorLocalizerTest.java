@@ -22,6 +22,7 @@ public class ErrorLocalizerTest {
     private static final String ERROR_MESSAGE = "someError";
     private static final String LOCALIZED_MESSAGE = "SomeMessage";
     private static final Locale TEST_LOCALE = Locale.ENGLISH;
+
     private Errors errors = mock(Errors.class);
     private ObjectError objectError = mock(ObjectError.class);
     private MessageSource messageSource = mock(MessageSource.class);

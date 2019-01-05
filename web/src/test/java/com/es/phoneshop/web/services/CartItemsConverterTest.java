@@ -16,6 +16,7 @@ public class CartItemsConverterTest {
     private static final long SECOND_ITEM_PHONE_ID = 2L;
     private static final int FIRST_ITEM_QUANTITY = 1;
     private static final int SECOND_ITEM_QUANTITY = 2;
+
     private Map<String, String> formData = new HashMap<>();
     private CartItem firstItem = new CartItem(FIRST_ITEM_PHONE_ID, FIRST_ITEM_QUANTITY);
     private CartItem secondItem = new CartItem(SECOND_ITEM_PHONE_ID, SECOND_ITEM_QUANTITY);

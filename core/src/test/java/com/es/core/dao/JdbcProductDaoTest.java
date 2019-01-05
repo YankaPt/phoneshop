@@ -30,6 +30,8 @@ public class JdbcProductDaoTest {
     private static final String SQL_QUERY_FOR_GETTING_PHONES = "select * from phones";
     private static final String SQL_QUERY_FOR_SETTING_STOCK = "insert into stocks (phoneId, stock, reserved) values (?,?,?)";
     private static final String SQL_QUERY_FOR_UPDATING_STOCK = "update stocks set stock=?, reserved=? where phoneId=?";
+    private static final String ORDER_BY = "brand";
+    private static final boolean IS_ASCEND = true;
     private static final Integer INITIAL_PHONE_STOCK_VALUE = 5;
     private static final Integer INITIAL_PHONE_RESERVED_VALUE = 1;
 
@@ -82,6 +84,21 @@ public class JdbcProductDaoTest {
         assertEquals(1, phones.size());
         assertEquals(initialPhone.getBrand(), phones.get(0).getBrand());
         assertEquals(initialPhone.getColors(), phones.get(0).getColors());
+    }
+
+    @Test
+    public void shouldFindOnlyWithPositiveStockWithOrderBy() {
+        Phone phoneWithNullStock = new Phone();
+        phoneWithNullStock.setId(998L);
+        phoneWithNullStock.setBrand("NullStockBrand");
+        phoneWithNullStock.setModel("NullStockModel");
+        phoneWithNullStock.setPrice(BigDecimal.ONE);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, phoneWithNullStock.getId(), phoneWithNullStock.getBrand(), phoneWithNullStock.getModel(), phoneWithNullStock.getPrice());
+
+        List<Phone> phones = productDao.findAllAvailableWithOrderBy(0, 5, ORDER_BY, IS_ASCEND);
+
+        assertEquals(1, phones.size());
+        assertNotEquals(phoneWithNullStock.getBrand(), phones.get(0).getBrand());
     }
 
     @Test

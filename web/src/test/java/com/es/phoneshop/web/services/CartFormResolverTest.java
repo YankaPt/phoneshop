@@ -19,6 +19,7 @@ public class CartFormResolverTest {
     private static final String NEGATIVE_OR_ZERO_MESSAGE = "quantity.negativeOrZero";
     private static final String NAN_MESSAGE = "quantity.NAN";
     private static final String EMPTY_MESSAGE = "field.required";
+
     private Map<String, String> formData = new HashMap<>();
     private CartItem firstItem = new CartItem(FIRST_ITEM_PHONE_ID, FIRST_ITEM_QUANTITY);
     private CartItem secondItem = new CartItem(SECOND_ITEM_PHONE_ID, SECOND_ITEM_QUANTITY);

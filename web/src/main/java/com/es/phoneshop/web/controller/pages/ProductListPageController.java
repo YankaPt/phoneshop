@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductListPageController {
     private static final String REDIRECTING_ADDRESS = "redirect:/productList?";
     private static final Integer AMOUNT_OF_SHOWED_PRODUCTS = 10;
+
     private final PhoneService phoneService;
     private final CartService cartService;
     private final TotalPriceService totalPriceService;

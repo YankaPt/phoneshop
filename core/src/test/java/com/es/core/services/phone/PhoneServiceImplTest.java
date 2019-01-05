@@ -1,6 +1,7 @@
 package com.es.core.services.phone;
 
 import com.es.core.dao.PhoneDao;
+import com.es.core.model.order.Order;
 import com.es.core.model.phone.Phone;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,9 @@ public class PhoneServiceImplTest {
     private static final String PHONE_BRAND = "SomeBrand";
     private static final String PHONE_MODEL = "SomeModel";
     private static final String KEYWORD = "Brand";
+    private static final String ORDER_BY = "brand";
+    private static final boolean IS_ASCEND = true;
+
     private PhoneDao phoneDao = mock(PhoneDao.class);
     private Phone phone = new Phone();
     private List<Phone> phones = new ArrayList<>();
@@ -39,6 +43,7 @@ public class PhoneServiceImplTest {
         phonesByKeyword.clear();
         phonesByKeyword.add(phone);
         when(phoneDao.findAllAvailable(OFFSET, LIMIT)).thenReturn(phones);
+        when(phoneDao.findAllAvailableWithOrderBy(OFFSET, LIMIT, ORDER_BY, IS_ASCEND)).thenReturn(phones);
         when(phoneDao.get(PHONE_ID)).thenReturn(Optional.of(phone));
         when(phoneDao.findAllByKeyword(KEYWORD)).thenReturn(phonesByKeyword);
         when(phoneDao.getTotalAmountOfAvailablePhones()).thenReturn((long) phones.size());
@@ -47,6 +52,13 @@ public class PhoneServiceImplTest {
     @Test
     public void shouldReturnPhonesWithPositiveStock() {
         List<Phone> actualListOfPhones = phoneService.getPhonesWithPositiveStock(OFFSET, LIMIT);
+
+        assertEquals(phones, actualListOfPhones);
+    }
+
+    @Test
+    public void shouldReturnPhonesWithPositiveStockWithOrderBy() {
+        List<Phone> actualListOfPhones = phoneService.getPhonesWithPositiveStockWithOrderBy(OFFSET, LIMIT, ORDER_BY, IS_ASCEND);
 
         assertEquals(phones, actualListOfPhones);
     }

@@ -24,6 +24,7 @@ public class ProductDetailsPageControllerTest {
     private static final String VIEW_NAME = "productDetails";
     private static final BigDecimal TOTAL_PRICE = BigDecimal.ONE;
     private static final int QUANTITY_OF_PRODUCTS = 1;
+
     private Model model = spy(Model.class);
     private Phone phone = new Phone();
     private CartService cartService = mock(CartService.class);

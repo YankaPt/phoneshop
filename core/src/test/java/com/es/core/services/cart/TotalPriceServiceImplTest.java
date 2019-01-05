@@ -22,6 +22,7 @@ public class TotalPriceServiceImplTest {
     private static final BigDecimal SECOND_PHONE_PRICE = new BigDecimal(3);
     private static final long FIRST_PHONE_ID = 34L;
     private static final long SECOND_PHONE_ID = 45L;
+
     private Cart cart = new Cart();
     private PhoneDao phoneDao = mock(PhoneDao.class);
     private TotalPriceService totalPriceService = new TotalPriceServiceImpl(cart, phoneDao);

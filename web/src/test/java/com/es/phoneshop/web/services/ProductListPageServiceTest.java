@@ -14,8 +14,11 @@ import static org.mockito.Mockito.when;
 
 public class ProductListPageServiceTest {
     private static final String KEYWORD = "keyword";
+    private static final String ORDER_BY = "brand";
+    private static final boolean IS_ASCEND = true;
     private static final int LIMIT = 10;
     private static final int FIRST_PAGE_NUMBER = 1;
+
     private List<Phone> phones = new ArrayList<>();
     private PhoneService phoneService = mock(PhoneService.class);
     private ProductListPageService productListPageService = new ProductListPageService(phoneService);
@@ -38,9 +41,9 @@ public class ProductListPageServiceTest {
     @Test
     public void shouldFindLimitAmountOfPhonesForFirstPage() {
         when(phoneService.getTotalAmountOfPhonesWithPositiveStock()).thenReturn((long) phones.size());
-        when(phoneService.getPhonesWithPositiveStock(FIRST_PAGE_NUMBER - 1, LIMIT)).thenReturn(phones.subList(FIRST_PAGE_NUMBER - 1, LIMIT));
+        when(phoneService.getPhonesWithPositiveStockWithOrderBy(FIRST_PAGE_NUMBER - 1, LIMIT, ORDER_BY, IS_ASCEND)).thenReturn(phones.subList(FIRST_PAGE_NUMBER - 1, LIMIT));
 
-        List<Phone> actualPhoneList = productListPageService.findPhonesForCurrentPage(FIRST_PAGE_NUMBER, LIMIT);
+        List<Phone> actualPhoneList = productListPageService.findPhonesForCurrentPage(FIRST_PAGE_NUMBER, LIMIT, ORDER_BY, IS_ASCEND);
 
         assertEquals(LIMIT, actualPhoneList.size());
         assertArrayEquals(phones.subList(FIRST_PAGE_NUMBER-1, LIMIT).toArray(), actualPhoneList.toArray());

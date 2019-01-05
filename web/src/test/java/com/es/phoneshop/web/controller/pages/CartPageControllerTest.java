@@ -30,6 +30,7 @@ public class CartPageControllerTest {
     private static final int FIRST_ITEM_QUANTITY = 1;
     private static final int SECOND_ITEM_QUANTITY = 2;
     private static final Locale TEST_LOCALE = Locale.ENGLISH;
+
     private Map<String, String> formData = new HashMap<>();
     private Map<Long, Integer> cartItems = new HashMap<>();
     private CartItem firstItem = new CartItem(FIRST_ITEM_PHONE_ID, FIRST_ITEM_QUANTITY);
