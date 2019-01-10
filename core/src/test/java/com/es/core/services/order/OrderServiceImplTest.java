@@ -7,13 +7,12 @@ import com.es.core.model.cart.CartItem;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderItem;
 import com.es.core.model.phone.Phone;
-import com.es.core.services.phone.PhoneService;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -23,40 +22,33 @@ public class OrderServiceImplTest {
     private static final long SECOND_PHONE_ID = 2L;
     private static final int FIRST_ITEM_QUANTITY = 1;
     private static final int SECOND_ITEM_QUANTITY = 2;
+    private static final long TEST_ORDER_ID = 1L;
+    private static final BigDecimal ORDER_TOTAL_PRICE = BigDecimal.ONE;
+    private static final Order NEW_ORDER = new Order();
     private Phone firstPhone = new Phone();
     private Phone secondPhone = new Phone();
     private List<CartItem> cartItems = new ArrayList<>();
-    private PhoneService phoneService = mock(PhoneService.class);
+    private List<OrderItem> orderItems = new ArrayList<>();
+    private Order expectedOrder = new Order();
+    private OrderItemsConverter orderItemsConverter = mock(OrderItemsConverter.class);
     private OrderPriceService orderPriceService = mock(OrderPriceService.class);
     private OrderDao orderDao = mock(OrderDao.class);
     private StockDao stockDao = mock(StockDao.class);
-    private OrderServiceImpl orderService = new OrderServiceImpl(phoneService, orderPriceService, orderDao, stockDao);
+    private OrderServiceImpl orderService = new OrderServiceImpl(orderItemsConverter, orderPriceService, orderDao, stockDao);
     private Cart cart = new Cart();
 
     @Before
     public void setUp() {
+        expectedOrder.setId(TEST_ORDER_ID);
         firstPhone.setId(FIRST_PHONE_ID);
         secondPhone.setId(SECOND_PHONE_ID);
         cartItems.clear();
         cartItems.add(new CartItem(FIRST_PHONE_ID, FIRST_ITEM_QUANTITY));
         cartItems.add(new CartItem(SECOND_PHONE_ID, SECOND_ITEM_QUANTITY));
         cart.setCartItems(cartItems);
-        when(phoneService.get(FIRST_PHONE_ID)).thenReturn(Optional.of(firstPhone));
-        when(phoneService.get(SECOND_PHONE_ID)).thenReturn(Optional.of(secondPhone));
-        //stockDao when()
-    }
-
-    @Test
-    public void shouldConvertCartItemsToOrderItems() {
-        Order order = new Order();
-        List<OrderItem> expectedItems = new ArrayList<>();
-        expectedItems.add(createOrderItem(order, firstPhone, FIRST_ITEM_QUANTITY));
-        expectedItems.add(createOrderItem(order, secondPhone, SECOND_ITEM_QUANTITY));
-        Phone la = phoneService.get(FIRST_PHONE_ID).get();
-
-        List<OrderItem> actualItems = orderService.convertCartItemsToOrderItems(cart.getCartItems(), order);
-
-        assertEquals(expectedItems, actualItems);
+        when(orderDao.getOrder(TEST_ORDER_ID)).thenReturn(expectedOrder);
+        when(orderItemsConverter.convertCartItemsToOrderItems(cartItems, expectedOrder)).thenReturn(orderItems);
+        when(orderPriceService.getTotalPriceOf(NEW_ORDER)).thenReturn(ORDER_TOTAL_PRICE);
     }
 
     private OrderItem createOrderItem(Order order, Phone phone, Integer quantity) {
@@ -69,6 +61,25 @@ public class OrderServiceImplTest {
 
     @Test
     public void shouldReturnCorrectOrder() {
+        Order actualOrder = orderService.getOrder(TEST_ORDER_ID);
 
+        assertEquals(expectedOrder, actualOrder);
+    }
+
+    @Test
+    public void shouldCreateNewOrder() {
+        Order actualOrder = orderService.createOrder(cart);
+
+        assertEquals(orderItems, actualOrder.getOrderItems());
+        assertEquals(ORDER_TOTAL_PRICE, actualOrder.getTotalPrice());
+    }
+
+    @Test
+    public void shouldPlaceOrder() {
+        expectedOrder.setId(null);
+        orderService.placeOrder(expectedOrder);
+
+        verify(orderDao).addOrder(expectedOrder);
+        assertNotNull(expectedOrder.getId());
     }
 }

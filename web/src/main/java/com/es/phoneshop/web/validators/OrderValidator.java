@@ -25,7 +25,7 @@ public class OrderValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ((Order) target).getOrderItems().forEach(orderItem -> {
             if (orderItem.getQuantity() > stockDao.getStockFor(orderItem.getPhone().getId())) {
-                errors.reject("quantity"+orderItem.getPhone().getId(), "field.required");
+                errors.reject("quantity" + orderItem.getPhone().getId(), "field.required");
             }
         });
     }

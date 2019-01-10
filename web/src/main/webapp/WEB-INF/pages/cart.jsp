@@ -41,7 +41,7 @@
                 <tr>
                     <td>${phone.brand}</td>
                     <td>
-                            ${phone.model}
+                        ${phone.model}
                         <br>
                         <a href="productDetails?phoneId=${phone.id}">More...</a>
                     </td>
