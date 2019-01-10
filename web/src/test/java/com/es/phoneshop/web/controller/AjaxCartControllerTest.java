@@ -28,11 +28,6 @@ public class AjaxCartControllerTest {
     private MessageSource messageSource = mock(MessageSource.class);
     private AjaxCartController controller = new AjaxCartController(cartService, totalPriceService, validator, messageSource);
 
-    @Before
-    public void setUp() {
-
-    }
-
     @Test
     public void shouldAddPhone() {
         Map<String, Object> result = controller.addPhone(cartItem, errors);

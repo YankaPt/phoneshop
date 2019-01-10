@@ -2,6 +2,9 @@ package com.es.phoneshop.web.services;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -16,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ErrorLocalizerTest {
     private static final long CART_ITEM_PHONE_ID = 1234L;
     private static final String ERROR_CODE = "quantity"+CART_ITEM_PHONE_ID;
@@ -23,7 +27,8 @@ public class ErrorLocalizerTest {
     private static final String LOCALIZED_MESSAGE = "SomeMessage";
     private static final Locale TEST_LOCALE = Locale.ENGLISH;
 
-    private Errors errors = mock(Errors.class);
+    @Mock
+    private Errors errors;
     private ObjectError objectError = mock(ObjectError.class);
     private MessageSource messageSource = mock(MessageSource.class);
     private ErrorLocalizer errorLocalizer = new ErrorLocalizer(messageSource);

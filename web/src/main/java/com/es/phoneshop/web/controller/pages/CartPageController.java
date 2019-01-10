@@ -23,7 +23,7 @@ import java.util.*;
 @RequestMapping(value = "/cart")
 public class CartPageController {
     private static final String REDIRECTING_ADDRESS = "redirect:/cart";
-    //Нужно ли отделять private static final от private final абзацем?
+
     private final CartService cartService;
     private final TotalPriceService totalPriceService;
     private final PhoneService phoneService;

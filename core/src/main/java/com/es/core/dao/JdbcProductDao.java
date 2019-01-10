@@ -35,7 +35,7 @@ public class JdbcProductDao implements PhoneDao {
     public void save(Phone phone) {
         checkPhoneIdAndSetIfNeeded(phone);
         insertPhone(phone);
-        if (!phone.getColors().equals(Collections.EMPTY_SET)) {
+        if (!phone.getColors().isEmpty()) {
             bindPhoneAndColor(phone);
         }
     }
