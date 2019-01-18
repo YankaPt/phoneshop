@@ -54,7 +54,7 @@ public class JdbcProductDao implements PhoneDao {
     private void bindPhoneAndColor(Phone phone) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         simpleJdbcInsert.withTableName("phone2color");
-        ArrayList<Map<String, ?>> batch = new ArrayList<>();
+        List<Map<String, ?>> batch = new ArrayList<>();
         phone.getColors().forEach(color -> {
             Map<String, Object> row = new HashMap<>(2);
             row.put("phoneId", phone.getId());

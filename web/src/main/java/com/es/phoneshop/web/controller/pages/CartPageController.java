@@ -31,7 +31,6 @@ public class CartPageController {
     private final ErrorLocalizer errorLocalizer;
     private final CartItemsConverter cartItemsConverter;
 
-
     @Autowired
     public CartPageController(CartService cartService, TotalPriceService totalPriceService, PhoneService phoneService, CartFormResolver cartFormResolver, ErrorLocalizer errorLocalizer, CartItemsConverter cartItemsConverter) {
         this.cartService = cartService;
