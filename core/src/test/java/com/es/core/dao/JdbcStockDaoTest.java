@@ -63,17 +63,11 @@ public class JdbcStockDaoTest {
 
     @Test
     public void shouldReserve() {
-        stockDao.increaseReservationForOrderItems(orderItems);
+        stockDao.reserveOrderItems(orderItems);
         int actualReserved = jdbcTemplate.queryForObject(SQL_QUERY_FOR_GETTING_RESERVED_QUANTITY, Integer.class, initialPhone.getId());
-
-        assertEquals(INITIAL_PHONE_QUANTITY+INITIAL_PHONE_RESERVED_VALUE, actualReserved);
-    }
-
-    @Test
-    public void shouldDecreaseStock() {
-        stockDao.decreaseStockForOrderItems(orderItems);
         int actualStock = jdbcTemplate.queryForObject(SQL_QUERY_FOR_GETTING_STOCK_QUANTITY, Integer.class, initialPhone.getId());
 
+        assertEquals(INITIAL_PHONE_QUANTITY+INITIAL_PHONE_RESERVED_VALUE, actualReserved);
         assertEquals(INITIAL_PHONE_STOCK_VALUE - INITIAL_PHONE_QUANTITY, actualStock);
     }
 }

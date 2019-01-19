@@ -2,10 +2,13 @@ package com.es.core.services.order;
 
 import com.es.core.dao.OrderDao;
 import com.es.core.dao.StockDao;
+import com.es.core.exceptions.OutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -13,7 +16,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderPriceService orderPriceService;
     private final OrderDao orderDao;
     private final StockDao stockDao;
-    private long ordersCount = 0;
+    private AtomicLong ordersCount = new AtomicLong(0);
 
     @Autowired
     public OrderServiceImpl(OrderItemsConverter orderItemsConverter, OrderPriceService orderPriceService, OrderDao orderDao, StockDao stockDao) {
@@ -40,11 +43,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void placeOrder(Order order) {
-        synchronized (this) {
-            order.setId(ordersCount++);
-        }
+        order.setId(ordersCount.getAndIncrement());
         orderDao.addOrder(order);
-        stockDao.decreaseStockForOrderItems(order.getOrderItems());
-        stockDao.increaseReservationForOrderItems(order.getOrderItems());
+        stockDao.reserveOrderItems(order.getOrderItems());
     }
 }

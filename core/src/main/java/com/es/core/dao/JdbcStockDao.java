@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 @Repository
 public class JdbcStockDao implements StockDao {
     private static final String SQL_FOR_GETTING_STOCK_BY_PHONE_ID = "select stock from stocks where stocks.phoneId = ?";
-    private static final String SQL_FOR_CHANGE_RESERVED_QUANTITY = "update stocks set reserved = reserved + ? where phoneId = ?";
-    private static final String SQL_FOR_CHANGE_STOCK_QUANTITY = "update stocks set stock = stock + ? where phoneId = ?";
+    private static final String SQL_FOR_MOVE_STOCK_QUANTITY_TO_RESERVED_QUANTITY = "update stocks set stock = stock - ?, reserved = reserved + ? where phoneId = ?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -28,18 +27,10 @@ public class JdbcStockDao implements StockDao {
     }
 
     @Override
-    public void increaseReservationForOrderItems(List<OrderItem> orderItems) {
+    public void reserveOrderItems(List<OrderItem> orderItems) {
         List<Object[]> batchArgs = orderItems.stream()
-                .map(orderItem -> new Object[]{orderItem.getQuantity(), orderItem.getPhone().getId()})
+                .map(orderItem -> new Object[]{orderItem.getQuantity(), orderItem.getQuantity(), orderItem.getPhone().getId()})
                 .collect(Collectors.toList());
-        jdbcTemplate.batchUpdate(SQL_FOR_CHANGE_RESERVED_QUANTITY, batchArgs, new int[]{Types.SMALLINT, Types.BIGINT});
-    }
-
-    @Override
-    public void decreaseStockForOrderItems(List<OrderItem> orderItems) {
-        List<Object[]> batchArgs = orderItems.stream()
-                .map(orderItem -> new Object[]{-orderItem.getQuantity(), orderItem.getPhone().getId()})
-                .collect(Collectors.toList());
-        jdbcTemplate.batchUpdate(SQL_FOR_CHANGE_STOCK_QUANTITY, batchArgs, new int[]{Types.SMALLINT, Types.BIGINT});
+        jdbcTemplate.batchUpdate(SQL_FOR_MOVE_STOCK_QUANTITY_TO_RESERVED_QUANTITY, batchArgs, new int[]{Types.SMALLINT, Types.SMALLINT, Types.BIGINT});
     }
 }

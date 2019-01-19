@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,9 @@ public class OrderServiceImplTest {
     private Phone secondPhone = new Phone();
     private List<CartItem> cartItems = new ArrayList<>();
     private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItemsWithErroneousData = new ArrayList<>();
     private Order expectedOrder = new Order();
+    private Order orderWithErroneousData = new Order();
     private OrderItemsConverter orderItemsConverter = mock(OrderItemsConverter.class);
     private OrderPriceService orderPriceService = mock(OrderPriceService.class);
     private OrderDao orderDao = mock(OrderDao.class);
@@ -40,6 +43,7 @@ public class OrderServiceImplTest {
     @Before
     public void setUp() {
         expectedOrder.setId(TEST_ORDER_ID);
+        orderWithErroneousData.setOrderItems(orderItemsWithErroneousData);
         firstPhone.setId(FIRST_PHONE_ID);
         secondPhone.setId(SECOND_PHONE_ID);
         cartItems.clear();
@@ -51,13 +55,6 @@ public class OrderServiceImplTest {
         when(orderPriceService.getTotalPriceOf(NEW_ORDER)).thenReturn(ORDER_TOTAL_PRICE);
     }
 
-    private OrderItem createOrderItem(Order order, Phone phone, Integer quantity) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        orderItem.setPhone(phone);
-        orderItem.setQuantity(quantity);
-        return orderItem;
-    }
 
     @Test
     public void shouldReturnCorrectOrder() {
@@ -77,9 +74,17 @@ public class OrderServiceImplTest {
     @Test
     public void shouldPlaceOrder() {
         expectedOrder.setId(null);
-        orderService.placeOrder(expectedOrder);
+        //orderService.placeOrder(expectedOrder);
 
         verify(orderDao).addOrder(expectedOrder);
         assertNotNull(expectedOrder.getId());
+    }
+
+    @Test(expected = SQLException.class)
+    public void shouldNotPlaceOrderAndThrowException() {
+        //orderService.placeOrder(orderWithErroneousData);
+
+        //verify(orderDao).addOrder(expectedOrder);
+        //assertNotNull(expectedOrder.getId());
     }
 }
