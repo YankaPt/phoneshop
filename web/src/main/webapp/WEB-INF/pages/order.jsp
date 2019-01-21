@@ -34,22 +34,22 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="orderItem" items="${order.orderItems}" varStatus="status">
+            <c:forEach var="phone" items="${phones}" varStatus="status">
                 <tr>
-                    <td>${orderItem.phone.brand}</td>
+                    <td>${phone.brand}</td>
                     <td>
-                            ${orderItem.phone.model}
+                            ${phone.model}
                         <br>
-                        <a href="productDetails?phoneId=${orderItem.phone.id}">More...</a>
+                        <a href="productDetails?phoneId=${phone.id}">More...</a>
                     </td>
                     <td>
-                        <c:forEach var="color" items="${orderItem.phone.colors}">
+                        <c:forEach var="color" items="${phone.colors}">
                             ${color}
                         </c:forEach>
                     </td>
-                    <td>${orderItem.phone.displaySizeInches}"</td>
-                    <td>${orderItem.quantity}</td>
-                    <td>$ ${orderItem.phone.price.multiply(orderItem.quantity)}</td>
+                    <td>${phone.displaySizeInches}"</td>
+                    <td>${cartItems.get(status.index).quantity}</td>
+                    <td>$ ${phone.price.multiply(cartItems.get(status.index).quantity)}</td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -62,15 +62,7 @@
             <tbody>
             <tr>
                 <td>Subtotal price:</td>
-                <td>${order.subtotal}</td>
-            </tr>
-            <tr>
-                <td>Delivery price:</td>
-                <td>${order.deliveryPrice}</td>
-            </tr>
-            <tr>
-                <td>TOTAL:</td>
-                <td>${order.totalPrice}</td>
+                <td>${cartItemsPrice}</td>
             </tr>
             </tbody>
         </table>

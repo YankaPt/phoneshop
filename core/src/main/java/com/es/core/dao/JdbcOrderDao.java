@@ -2,7 +2,6 @@ package com.es.core.dao;
 
 import com.es.core.dao.mappers.OrderResultSetExtractor;
 import com.es.core.model.order.Order;
-import com.es.core.model.phone.Phone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -18,7 +17,6 @@ public class JdbcOrderDao implements OrderDao {
     private final JdbcTemplate jdbcTemplate;
     private PhoneDao phoneDao;
     private ResultSetExtractor<Order> orderResultSetExtractor;
-    private List<Order> orders = new ArrayList<>();
 
     @Autowired
     public JdbcOrderDao(JdbcTemplate jdbcTemplate, PhoneDao phoneDao) {
@@ -30,12 +28,10 @@ public class JdbcOrderDao implements OrderDao {
     @Override
     public Optional<Order> getOrder(Long id) {
         return Optional.ofNullable(jdbcTemplate.query(SQL_STATEMENT_FOR_GETTING_ORDER, orderResultSetExtractor, id));
-        //return orders.stream().filter(order1 -> order1.getId().equals(id)).findFirst();
     }
 
     @Override
     public void addOrder(Order order) {
-        orders.add(order);
         insertOrder(order);
         bindOrderAndOrderItems(order);
     }

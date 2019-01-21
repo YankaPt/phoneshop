@@ -36,22 +36,22 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="orderItem" items="${order.orderItems}" varStatus="status">
+        <c:forEach var="cartItem" items="${order.orderItems}" varStatus="status">
             <tr>
-                <td>${orderItem.phone.brand}</td>
+                <td>${cartItem.phone.brand}</td>
                 <td>
-                        ${orderItem.phone.model}
+                        ${cartItem.phone.model}
                     <br>
-                    <a href="productDetails?phoneId=${orderItem.phone.id}">More...</a>
+                    <a href="productDetails?phoneId=${cartItem.phone.id}">More...</a>
                 </td>
                 <td>
-                    <c:forEach var="color" items="${orderItem.phone.colors}">
+                    <c:forEach var="color" items="${cartItem.phone.colors}">
                         ${color}
                     </c:forEach>
                 </td>
-                <td>${orderItem.phone.displaySizeInches}"</td>
-                <td>${orderItem.quantity}</td>
-                <td>$ ${orderItem.phone.price.multiply(orderItem.quantity)}</td>
+                <td>${cartItem.phone.displaySizeInches}"</td>
+                <td>${cartItem.quantity}</td>
+                <td>$ ${cartItem.phone.price.multiply(cartItem.quantity)}</td>
             </tr>
         </c:forEach>
         </tbody>
