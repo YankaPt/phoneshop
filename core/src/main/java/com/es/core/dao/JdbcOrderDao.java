@@ -52,7 +52,7 @@ public class JdbcOrderDao implements OrderDao {
         result.put("firstName", order.getFirstName());
         result.put("lastName", order.getLastName());
         result.put("deliveryAddress", order.getDeliveryAddress());
-        result.put("contactPhoneNumber", order.getContactPhoneNo());
+        result.put("contactPhoneNo", order.getContactPhoneNo());
         result.put("additionalInformation", order.getAdditionalInformation());
         return result;
     }

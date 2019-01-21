@@ -28,7 +28,7 @@ public class JdbcOrderDaoTest {
     private static final String SQL_QUERY_FOR_INSERT_PHONE = "insert into phones (id, brand, model, price) values (?, ?, ?, ?)";
     private static final String SQL_QUERY_FOR_CLEAR_PHONES = "delete from phones";
     private static final String SQL_QUERY_FOR_INSERT_ORDER_ITEM = "insert into order2orderItem (orderId, phoneId, quantity) values (?, ?, ?)";
-    private static final String SQL_QUERY_FOR_INSERT_ORDER = "insert into orders (id, status, subtotal, deliveryPrice, totalPrice, firstName, lastName, deliveryAddress, contactPhoneNumber) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_QUERY_FOR_INSERT_ORDER = "insert into orders (id, status, subtotal, deliveryPrice, totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_QUERY_FOR_GETTING_ORDER = "";
     private static final String SQL_QUERY_FOR_CLEAR_ORDERS = "delete from orders";
     private static final long ORDER_ID = 1L;
@@ -39,7 +39,7 @@ public class JdbcOrderDaoTest {
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
     private static final String DELIVERY_ADDRESS = "address";
-    private static final String CONTACT_PHONE_NUMBER = "phoneNumber";
+    private static final String CONTACT_PHONE_NO = "phoneNumber";
     private static final int INITIAL_PHONE_QUANTITY = 1;
 
     @Autowired
@@ -60,7 +60,7 @@ public class JdbcOrderDaoTest {
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_PHONES);
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_ORDERS);
         jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, initialPhone.getId(), initialPhone.getBrand(), initialPhone.getModel(), initialPhone.getPrice());
-        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NUMBER);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NO);
         jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER_ITEM, ORDER_ID, initialPhone.getId(), INITIAL_PHONE_QUANTITY);
         when(phoneDao.get(initialPhone.getId())).thenReturn(Optional.of(initialPhone));
     }
@@ -74,12 +74,12 @@ public class JdbcOrderDaoTest {
 
     @Test
     public void shouldReturnCorrectOrder() {
-        Order testOrder = jdbcTemplate.queryForObject("select * from orders where id = 1", new BeanPropertyRowMapper<>(Order.class));
-        OrderItem orderItem = jdbcTemplate.queryForObject("select * from orders left join order2orderItem on orders.id = order2orderItem.orderId where orders.id = 1", new BeanPropertyRowMapper<>(OrderItem.class));
-        System.out.println(orderItem.getQuantity());
         Optional<Order> order = orderDao.getOrder(ORDER_ID);
 
         assertTrue(order.isPresent());
+        assertEquals(FIRST_NAME, order.get().getFirstName());
+        assertEquals(STATUS, order.get().getStatus());
+        assertEquals(CONTACT_PHONE_NO, order.get().getContactPhoneNo());
     }
 
 }

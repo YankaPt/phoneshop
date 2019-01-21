@@ -48,7 +48,7 @@ public class OrderPageController {
     @GetMapping
     public String getOrder(Model model) {
         if (model.containsAttribute("errors")) {
-            model.addAttribute("errors", (BindingResult) model.asMap().get("errors"));
+            model.addAttribute("errors", model.asMap().get("errors"));
         }
         List<CartItem> cartItems = cartService.getCart().getCartItems();
         List<Phone> phones = new ArrayList<>();
@@ -62,22 +62,23 @@ public class OrderPageController {
 
     @PostMapping
     public String placeOrder(Customer customer, RedirectAttributes redirectAttributes) {
-        Order order = orderService.createOrder(cartService.getCart());
         DataBinder customerBinder = new DataBinder(customer);
         customerBinder.setValidator(customerValidator);
-        if (hasErrors(order, customerBinder, redirectAttributes)) {
+        if (hasErrors(customerBinder, redirectAttributes)) {
             return REDIRECTING_GET_ADDRESS;
         }
+        Order order = orderService.createOrder(cartService.getCart());
         DataBinder orderBinder = new DataBinder(order);
         orderBinder.setValidator(orderValidator);
-        if (hasErrors(order, orderBinder, redirectAttributes)) {
+        if (hasErrors(orderBinder, redirectAttributes)) {
             return REDIRECTING_GET_ADDRESS;
         }
         setCustomerInfoAndStatusToOrder(order, customer);
         try {
             orderService.placeOrder(order);
         } catch (OutOfStockException ex) {
-            return REDIRECTING_GET_ADDRESS; //fix this stub with message and return order
+            redirectAttributes.addFlashAttribute("redirectedMessage", "Sorry, an unexpected error has occurred");
+            return "productList";
         }
         cartService.getCart().getCartItems().clear();
         redirectAttributes.addFlashAttribute("orderId", order.getId());
@@ -93,11 +94,10 @@ public class OrderPageController {
         order.setStatus(OrderStatus.NEW);
     }
 
-    private boolean hasErrors(Order order, DataBinder dataBinder, RedirectAttributes redirectAttributes) {
+    private boolean hasErrors(DataBinder dataBinder, RedirectAttributes redirectAttributes) {
         dataBinder.validate();
         if (dataBinder.getBindingResult().hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", dataBinder.getBindingResult());
-            redirectAttributes.addFlashAttribute("order", order);
             return true;
         }
         return false;

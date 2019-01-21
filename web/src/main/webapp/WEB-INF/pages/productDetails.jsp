@@ -11,7 +11,7 @@
     <title>Product list</title>
 </head>
 <body>
-<div id="cart" style="text-align: right">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
+<jsp:include page="header.jsp"/>
 <p>
     Hello from product page!
 </p>

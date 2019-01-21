@@ -62,10 +62,10 @@ create table orders (
   subtotal FLOAT NOT NULL,
   deliveryPrice FLOAT NOT NULL,
   totalPrice FLOAT NOT NULL,
-  firstName VARCHAR(50) NOT NULL,
-  lastName VARCHAR(50) NOT NULL ,
-  deliveryAddress VARCHAR(100) NOT NULL,
-  contactPhoneNumber VARCHAR(50) NOT NULL,
+  firstName VARCHAR(256) NOT NULL,
+  lastName VARCHAR(256) NOT NULL ,
+  deliveryAddress VARCHAR(256) NOT NULL,
+  contactPhoneNo VARCHAR(256) NOT NULL,
   additionalInformation VARCHAR(4096)
 );
 
