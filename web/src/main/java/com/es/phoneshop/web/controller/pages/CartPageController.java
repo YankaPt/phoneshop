@@ -35,6 +35,9 @@ public class CartPageController {
     @RequestMapping(method = RequestMethod.GET)
     public String getCart(Model model) {
         List<CartItem> cartItems = cartService.getCart().getCartItems();
+        if (cartItems.isEmpty()) {
+            return "emptyCart";
+        }
         List<Phone> phones = new ArrayList<>();
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
         model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());

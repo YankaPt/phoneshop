@@ -2,10 +2,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>404</title>
+    <title>Cart</title>
 </head>
 <body>
-Ooops, page not found
+<jsp:include page="header.jsp"/>
+Sorry, your cart is empty :(
 <form action="<c:url value="productList"/>">
     <button>Back to Product List</button>
 </form>

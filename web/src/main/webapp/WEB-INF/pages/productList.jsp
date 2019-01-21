@@ -4,12 +4,7 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="webjars/bootstrap-sortable/1.11.1/Contents/bootstrap-sortable.css">
     <link rel="stylesheet" href="<c:url value="/resources/styles/PLP_styles.css"/>">
-    <script src="webjars/jquery/3.0.0/jquery.min.js"></script>
-    <script src="webjars/bootstrap-sortable/1.11.1/Scripts/bootstrap-sortable.js"></script>
-    <script src="webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="<c:url value="/resources/scripts/PLP_scripts.js"/>"></script>
     <c:set var="cartItemsAmount" scope="session" value="'My cart: 0 items'"/>
     <title>Product list</title>
@@ -67,7 +62,7 @@
         </nav>
     </div>
     <div class="table-responsive">
-        <table id="table" class="table table-striped table-bordered table-hover table-sm sortable" cellspacing="0"
+        <table id="table" class="table table-striped table-bordered table-hover table-sm" cellspacing="0"
                width="100%">
             <thead>
             <tr>
