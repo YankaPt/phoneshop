@@ -1,11 +1,14 @@
 package com.es.core.model.order;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class Order {
     private Long id;
+    private OrderStatus status;
+
     private List<OrderItem> orderItems;
     private BigDecimal subtotal;
     private BigDecimal deliveryPrice;
@@ -16,8 +19,6 @@ public class Order {
     private String deliveryAddress;
     private String contactPhoneNo;
     private String additionalInformation;
-
-    private OrderStatus status;
 
     public Long getId() {
         return id;

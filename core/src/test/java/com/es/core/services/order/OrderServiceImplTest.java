@@ -9,6 +9,7 @@ import com.es.core.model.order.OrderItem;
 import com.es.core.model.phone.Phone;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -37,7 +38,8 @@ public class OrderServiceImplTest {
     private OrderPriceService orderPriceService = mock(OrderPriceService.class);
     private OrderDao orderDao = mock(OrderDao.class);
     private StockDao stockDao = mock(StockDao.class);
-    private OrderServiceImpl orderService = new OrderServiceImpl(orderItemsConverter, orderPriceService, orderDao, stockDao);
+    private PlatformTransactionManager transactionManager = mock(PlatformTransactionManager.class);
+    private OrderServiceImpl orderService = new OrderServiceImpl(orderItemsConverter, orderPriceService, orderDao, stockDao, transactionManager);
     private Cart cart = new Cart();
 
     @Before
@@ -50,7 +52,7 @@ public class OrderServiceImplTest {
         cartItems.add(new CartItem(FIRST_PHONE_ID, FIRST_ITEM_QUANTITY));
         cartItems.add(new CartItem(SECOND_PHONE_ID, SECOND_ITEM_QUANTITY));
         cart.setCartItems(cartItems);
-        when(orderDao.getOrder(TEST_ORDER_ID)).thenReturn(expectedOrder);
+        //when(orderDao.getOrder(TEST_ORDER_ID)).thenReturn(expectedOrder);
         when(orderItemsConverter.convertCartItemsToOrderItems(cartItems, expectedOrder)).thenReturn(orderItems);
         when(orderPriceService.getTotalPriceOf(NEW_ORDER)).thenReturn(ORDER_TOTAL_PRICE);
     }

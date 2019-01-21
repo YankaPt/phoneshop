@@ -5,7 +5,6 @@ import com.es.core.model.phone.Phone;
 import java.util.Objects;
 
 public class OrderItem {
-    private Long id;
     private Phone phone;
     private Order order;
     private Integer quantity;

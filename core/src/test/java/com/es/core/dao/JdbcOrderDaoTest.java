@@ -1,0 +1,85 @@
+package com.es.core.dao;
+
+import com.es.core.model.order.Order;
+import com.es.core.model.order.OrderItem;
+import com.es.core.model.order.OrderStatus;
+import com.es.core.model.phone.Phone;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/test-config.xml")
+public class JdbcOrderDaoTest {
+    private static final String SQL_QUERY_FOR_INSERT_PHONE = "insert into phones (id, brand, model, price) values (?, ?, ?, ?)";
+    private static final String SQL_QUERY_FOR_CLEAR_PHONES = "delete from phones";
+    private static final String SQL_QUERY_FOR_INSERT_ORDER_ITEM = "insert into order2orderItem (orderId, phoneId, quantity) values (?, ?, ?)";
+    private static final String SQL_QUERY_FOR_INSERT_ORDER = "insert into orders (id, status, subtotal, deliveryPrice, totalPrice, firstName, lastName, deliveryAddress, contactPhoneNumber) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_QUERY_FOR_GETTING_ORDER = "";
+    private static final String SQL_QUERY_FOR_CLEAR_ORDERS = "delete from orders";
+    private static final long ORDER_ID = 1L;
+    private static final OrderStatus STATUS = OrderStatus.NEW;
+    private static final BigDecimal SUBTOTAL = BigDecimal.ONE;
+    private static final BigDecimal DELIVERY_PRICE = BigDecimal.ZERO;
+    private static final BigDecimal TOTAL_PRICE = BigDecimal.ONE;
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+    private static final String DELIVERY_ADDRESS = "address";
+    private static final String CONTACT_PHONE_NUMBER = "phoneNumber";
+    private static final int INITIAL_PHONE_QUANTITY = 1;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    private PhoneDao phoneDao = mock(PhoneDao.class);
+    private OrderDao orderDao;
+    private Phone initialPhone = new Phone();
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @Before
+    public void setUp() {
+        orderDao = new JdbcOrderDao(jdbcTemplate, phoneDao);
+        initialPhone.setId(999L);
+        initialPhone.setBrand("TestBrand");
+        initialPhone.setModel("testModel");
+        initialPhone.setPrice(BigDecimal.ONE);
+        makeAndAddOrderItemToList(initialPhone, INITIAL_PHONE_QUANTITY);
+        jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_PHONES);
+        jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_ORDERS);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, initialPhone.getId(), initialPhone.getBrand(), initialPhone.getModel(), initialPhone.getPrice());
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NUMBER);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER_ITEM, ORDER_ID, initialPhone.getId(), INITIAL_PHONE_QUANTITY);
+        when(phoneDao.get(initialPhone.getId())).thenReturn(Optional.of(initialPhone));
+    }
+
+    private void makeAndAddOrderItemToList(Phone phone, int quantity) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setPhone(phone);
+        orderItem.setQuantity(quantity);
+        orderItems.add(orderItem);
+    }
+
+    @Test
+    public void shouldReturnCorrectOrder() {
+        Order testOrder = jdbcTemplate.queryForObject("select * from orders where id = 1", new BeanPropertyRowMapper<>(Order.class));
+        OrderItem orderItem = jdbcTemplate.queryForObject("select * from orders left join order2orderItem on orders.id = order2orderItem.orderId where orders.id = 1", new BeanPropertyRowMapper<>(OrderItem.class));
+        System.out.println(orderItem.getQuantity());
+        Optional<Order> order = orderDao.getOrder(ORDER_ID);
+
+        assertTrue(order.isPresent());
+    }
+
+}

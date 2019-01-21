@@ -18,6 +18,8 @@
 
     <bean id="stockDao" class="com.es.core.dao.JdbcStockDao"/>
 
+    <bean id="orderDao" class="com.es.core.dao.JdbcOrderDao"/>
+
     <bean id="cartService" class="com.es.core.services.cart.CartServiceImpl"/>
 
     <bean id="totalPriceService" class="com.es.core.services.cart.TotalPriceServiceImpl"/>

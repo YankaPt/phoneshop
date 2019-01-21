@@ -1,5 +1,6 @@
 package com.es.phoneshop.web.controller.pages;
 
+import com.es.core.exceptions.OutOfStockException;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderStatus;
 import com.es.core.services.cart.CartService;
@@ -57,21 +58,27 @@ public class OrderPageController {
         }
         DataBinder orderBinder = new DataBinder(order);
         orderBinder.setValidator(orderValidator);
-        synchronized (this) {
-            if (hasErrors(order, orderBinder, redirectAttributes)) {
-                return REDIRECTING_GET_ADDRESS;
-            }
-            order.setFirstName(customer.getFirstName());
-            order.setLastName(customer.getLastName());
-            order.setDeliveryAddress(customer.getAddress());
-            order.setContactPhoneNo(customer.getContactNumber());
-            order.setAdditionalInformation(customer.getAdditionalInformation());
-            order.setStatus(OrderStatus.NEW);
-            cartService.getCart().getCartItems().clear();
-            orderService.placeOrder(order);
+        if (hasErrors(order, orderBinder, redirectAttributes)) {
+            return REDIRECTING_GET_ADDRESS;
         }
+        setCustomerInfoAndStatusToOrder(order, customer);
+        try {
+            orderService.placeOrder(order);
+        } catch (OutOfStockException ex) {
+            return REDIRECTING_GET_ADDRESS; //fix this stub with message and return order
+        }
+        cartService.getCart().getCartItems().clear();
         redirectAttributes.addFlashAttribute("orderId", order.getId());
         return REDIRECTING_ORDER_OVERVIEW_ADDRESS;
+    }
+
+    private void setCustomerInfoAndStatusToOrder(Order order, Customer customer) {
+        order.setFirstName(customer.getFirstName());
+        order.setLastName(customer.getLastName());
+        order.setDeliveryAddress(customer.getAddress());
+        order.setContactPhoneNo(customer.getContactNumber());
+        order.setAdditionalInformation(customer.getAdditionalInformation());
+        order.setStatus(OrderStatus.NEW);
     }
 
     private boolean hasErrors(Order order, DataBinder dataBinder, RedirectAttributes redirectAttributes) {
