@@ -52,7 +52,7 @@ public class AjaxCartController {
         try {
             cartService.addPhone(cartItem.getPhoneId(), cartItem.getQuantity());
             response.put("cartItemsAmount", cartService.getQuantityOfProducts());
-            response.put("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+            response.put("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
             response.put("message", SUCCESS_MESSAGE);
             return response;
         } catch (OutOfStockException exception) {

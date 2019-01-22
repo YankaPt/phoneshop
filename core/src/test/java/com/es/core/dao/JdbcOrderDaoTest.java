@@ -29,7 +29,8 @@ public class JdbcOrderDaoTest {
     private static final String SQL_QUERY_FOR_CLEAR_PHONES = "delete from phones";
     private static final String SQL_QUERY_FOR_INSERT_ORDER_ITEM = "insert into order2orderItem (orderId, phoneId, quantity) values (?, ?, ?)";
     private static final String SQL_QUERY_FOR_INSERT_ORDER = "insert into orders (id, status, subtotal, deliveryPrice, totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_QUERY_FOR_GETTING_ORDER = "";
+    private static final String SQL_QUERY_FOR_GETTING_ORDER = "select * from orders where id = ?";
+    private static final String SQL_QUERY_FOR_GETTING_ORDER_ITEMS = "select * from order2orderItem where orderId = ?";
     private static final String SQL_QUERY_FOR_CLEAR_ORDERS = "delete from orders";
     private static final long ORDER_ID = 1L;
     private static final OrderStatus STATUS = OrderStatus.NEW;
@@ -82,4 +83,27 @@ public class JdbcOrderDaoTest {
         assertEquals(CONTACT_PHONE_NO, order.get().getContactPhoneNo());
     }
 
+    @Test
+    public void shouldAddOrder() {
+        jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_ORDERS);
+        Order order = new Order();
+        order.setId(ORDER_ID);
+        order.setStatus(STATUS);
+        order.setSubtotal(SUBTOTAL);
+        order.setDeliveryPrice(DELIVERY_PRICE);
+        order.setTotalPrice(TOTAL_PRICE);
+        order.setFirstName(FIRST_NAME);
+        order.setLastName(LAST_NAME);
+        order.setDeliveryAddress(DELIVERY_ADDRESS);
+        order.setContactPhoneNo(CONTACT_PHONE_NO);
+        order.setOrderItems(orderItems);
+
+        orderDao.addOrder(order);
+        Order actualOrder = jdbcTemplate.queryForObject(SQL_QUERY_FOR_GETTING_ORDER, new BeanPropertyRowMapper<>(Order.class), order.getId());
+        List<OrderItem> actualOrderItemsList = jdbcTemplate.query(SQL_QUERY_FOR_GETTING_ORDER_ITEMS, new BeanPropertyRowMapper<>(OrderItem.class), order.getId());
+
+        assertEquals(order, actualOrder);
+        assertEquals(order.getFirstName(), actualOrder.getFirstName());
+        assertEquals(1, actualOrderItemsList.size());
+    }
 }

@@ -6,9 +6,9 @@
 <html>
 <head>
     <title>Product list</title>
+    <link rel="stylesheet" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
 </head>
 <body>
-<jsp:include page="header.jsp"/>
 <p>
     Thank you for your Order!
 </p>

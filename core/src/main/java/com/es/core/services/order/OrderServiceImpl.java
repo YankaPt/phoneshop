@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
             stockDao.reserveOrderItems(order.getOrderItems());
             orderDao.addOrder(order);
         }
-        catch (DataAccessException ex) {
+        catch (DataAccessException exception) {
             transactionManager.rollback(status);
             throw new OutOfStockException();
         }

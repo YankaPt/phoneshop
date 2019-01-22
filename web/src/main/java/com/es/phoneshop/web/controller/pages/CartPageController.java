@@ -40,7 +40,7 @@ public class CartPageController {
         }
         List<Phone> phones = new ArrayList<>();
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
-        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         cartItems.forEach(cartItem -> phones.add(phoneService.get(cartItem.getPhoneId()).get()));
         model.addAttribute("phones", phones);
         model.addAttribute("cartItems", cartItems);

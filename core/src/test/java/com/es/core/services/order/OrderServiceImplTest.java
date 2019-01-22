@@ -2,6 +2,7 @@ package com.es.core.services.order;
 
 import com.es.core.dao.OrderDao;
 import com.es.core.dao.StockDao;
+import com.es.core.exceptions.OutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.order.Order;
@@ -9,12 +10,13 @@ import com.es.core.model.order.OrderItem;
 import com.es.core.model.phone.Phone;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.jdbc.datasource.init.ScriptStatementFailedException;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -52,7 +54,8 @@ public class OrderServiceImplTest {
         cartItems.add(new CartItem(FIRST_PHONE_ID, FIRST_ITEM_QUANTITY));
         cartItems.add(new CartItem(SECOND_PHONE_ID, SECOND_ITEM_QUANTITY));
         cart.setCartItems(cartItems);
-        //when(orderDao.getOrder(TEST_ORDER_ID)).thenReturn(expectedOrder);
+        when(orderDao.getOrder(TEST_ORDER_ID)).thenReturn(Optional.of(expectedOrder));
+        doThrow(ScriptStatementFailedException.class).when(stockDao).reserveOrderItems(orderItemsWithErroneousData);
         when(orderItemsConverter.convertCartItemsToOrderItems(cartItems, expectedOrder)).thenReturn(orderItems);
         when(orderPriceService.getTotalPriceOf(NEW_ORDER)).thenReturn(ORDER_TOTAL_PRICE);
     }
@@ -76,17 +79,21 @@ public class OrderServiceImplTest {
     @Test
     public void shouldPlaceOrder() {
         expectedOrder.setId(null);
-        //orderService.placeOrder(expectedOrder);
+        try {
+            orderService.placeOrder(expectedOrder);
+        } catch (OutOfStockException exception) {
+            fail();
+        }
 
         verify(orderDao).addOrder(expectedOrder);
         assertNotNull(expectedOrder.getId());
     }
 
-    @Test(expected = SQLException.class)
-    public void shouldNotPlaceOrderAndThrowException() {
-        //orderService.placeOrder(orderWithErroneousData);
+    @Test(expected = OutOfStockException.class)
+    public void shouldNotPlaceOrderAndThrowException() throws OutOfStockException{
+        orderService.placeOrder(orderWithErroneousData);
 
-        //verify(orderDao).addOrder(expectedOrder);
-        //assertNotNull(expectedOrder.getId());
+        verify(orderDao).addOrder(orderWithErroneousData);
+        assertNotNull(expectedOrder.getId());
     }
 }

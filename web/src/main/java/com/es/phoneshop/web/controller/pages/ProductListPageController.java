@@ -36,7 +36,7 @@ public class ProductListPageController {
             model.addAttribute("phones", findPhonesForCurrentPage(pageNumber));
         }
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
-        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         model.addAttribute("maxPageNumber", phoneService.getTotalAmountOfPhonesWithPositiveStock() / AMOUNT_OF_SHOWED_PRODUCTS);
         model.addAttribute("pageNumber", pageNumber);
         return "productList";

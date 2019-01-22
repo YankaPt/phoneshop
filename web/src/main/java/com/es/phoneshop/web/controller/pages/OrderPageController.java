@@ -52,7 +52,8 @@ public class OrderPageController {
         }
         List<CartItem> cartItems = cartService.getCart().getCartItems();
         List<Phone> phones = new ArrayList<>();
-        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+        model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
+        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         cartItems.forEach(cartItem -> phones.add(phoneService.get(cartItem.getPhoneId()).get()));
         model.addAttribute("phones", phones);
         model.addAttribute("cartItems", cartItems);
