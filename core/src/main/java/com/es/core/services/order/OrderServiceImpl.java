@@ -13,6 +13,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -63,5 +64,15 @@ public class OrderServiceImpl implements OrderService {
             throw new OutOfStockException();
         }
         transactionManager.commit(status);
+    }
+
+    @Override
+    public List<Order> getAllOrders() {
+        return orderDao.getAllOrders();
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        orderDao.updateOrder(order);
     }
 }

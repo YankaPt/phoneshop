@@ -6,7 +6,7 @@
 <html>
 <head>
     <script src="<c:url value="/resources/scripts/CartPage_scripts.js"/>"></script>
-    <title>Product list</title>
+    <title>Cart</title>
 </head>
 <body>
 <jsp:include page="header.jsp"/>

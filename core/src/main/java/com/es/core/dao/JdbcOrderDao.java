@@ -1,6 +1,6 @@
 package com.es.core.dao;
 
-import com.es.core.dao.mappers.OrderResultSetExtractor;
+import com.es.core.dao.mappers.OrderListResultSetExtractor;
 import com.es.core.model.order.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,20 +14,23 @@ import java.util.*;
 @Repository
 public class JdbcOrderDao implements OrderDao {
     private static final String SQL_STATEMENT_FOR_GETTING_ORDER = "select * from orders left join order2orderItem on orders.id = order2orderItem.orderId where orders.id = ?";
+    private static final String SQL_STATEMENT_FOR_GETTING_ORDERS = "select * from orders left join order2orderItem on orders.id = order2orderItem.orderId";
+    private static final String SQL_STATEMENT_FOR_DELETING_ORDER = "delete from orders where id = ?";
     private final JdbcTemplate jdbcTemplate;
     private PhoneDao phoneDao;
-    private ResultSetExtractor<Order> orderResultSetExtractor;
+    private ResultSetExtractor<Order> orderListResultSetExtractor;
 
     @Autowired
     public JdbcOrderDao(JdbcTemplate jdbcTemplate, PhoneDao phoneDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.phoneDao = phoneDao;
-        orderResultSetExtractor = new OrderResultSetExtractor(phoneDao);
+        orderListResultSetExtractor = new OrderListResultSetExtractor(phoneDao);
     }
 
     @Override
     public Optional<Order> getOrder(Long id) {
-        return Optional.ofNullable(jdbcTemplate.query(SQL_STATEMENT_FOR_GETTING_ORDER, orderResultSetExtractor, id));
+        List<Order> orderAsList = (List<Order>)jdbcTemplate.query(SQL_STATEMENT_FOR_GETTING_ORDER, orderListResultSetExtractor, id);
+        return Optional.ofNullable(orderAsList.get(0));
     }
 
     @Override
@@ -67,4 +70,14 @@ public class JdbcOrderDao implements OrderDao {
         simpleJdbcInsert.executeBatch(batch);
     }
 
+    @Override
+    public List<Order> getAllOrders() {
+        return (List<Order>) jdbcTemplate.query(SQL_STATEMENT_FOR_GETTING_ORDERS, orderListResultSetExtractor);
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        jdbcTemplate.update(SQL_STATEMENT_FOR_DELETING_ORDER, order.getId());
+        addOrder(order);
+    }
 }
