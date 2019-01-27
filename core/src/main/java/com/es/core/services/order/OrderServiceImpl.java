@@ -5,6 +5,7 @@ import com.es.core.dao.StockDao;
 import com.es.core.exceptions.OutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
+import com.es.core.model.order.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrder(Order order) {
-        orderDao.updateOrder(order);
+    public void updateOrderStatus(Order order) {
+        orderDao.updateOrderStatus(order);
+        OrderStatus status = order.getStatus();
+        if (status.equals(OrderStatus.DELIVERED)) {
+            stockDao.removeReservationForOrderItems(order.getOrderItems());
+        } else if (status.equals(OrderStatus.REJECTED)) {
+            stockDao.unrollReservationForOrderItems(order.getOrderItems());
+        }
     }
 }

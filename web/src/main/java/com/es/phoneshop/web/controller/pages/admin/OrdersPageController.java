@@ -52,7 +52,7 @@ public class OrdersPageController {
         } else if (rejected != null) {
             order.setStatus(OrderStatus.REJECTED);
         }
-        orderService.updateOrder(order);
+        orderService.updateOrderStatus(order);
         return REDIRECTING_ORDER_OVERVIEW_ADDRESS + "/" + orderId;
     }
 }

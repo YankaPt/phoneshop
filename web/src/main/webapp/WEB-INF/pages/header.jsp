@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="<c:url value="/resources/styles/header.css"/>">
 </head>
 <body>
+<p>
+<form class="minicart" action="<c:url value="/admin/orders"/>">
+    <button>admin</button>
+</form>
+</p>
 <div id="cart" class="minicart">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
 </body>
 </html>

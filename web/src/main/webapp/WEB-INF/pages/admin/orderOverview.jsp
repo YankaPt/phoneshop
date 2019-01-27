@@ -1,3 +1,4 @@
+<%@ page import="com.es.core.model.order.OrderStatus" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -27,7 +28,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="orderItem" items="${order.orderItems}" varStatus="status">
+        <c:forEach var="orderItem" items="${order.orderItems}">
             <tr>
                 <td>${orderItem.phone.brand}</td>
                 <td>
@@ -92,8 +93,8 @@
     <button>Back</button>
 </form>
 <form method="post">
-    <input type="submit" name="delivered" value="Delivered">
-    <input type="submit" name="rejected" value="Rejected">
+    <input type="submit" <c:if test='${order.status != "NEW"}'> disabled </c:if> name="delivered" value="Delivered">
+    <input type="submit" <c:if test='${order.status != "NEW"}'> disabled </c:if> name="rejected" value="Rejected">
 </form>
 </body>
 </html>

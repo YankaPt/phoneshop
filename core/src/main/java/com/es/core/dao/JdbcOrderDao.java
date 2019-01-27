@@ -15,7 +15,7 @@ import java.util.*;
 public class JdbcOrderDao implements OrderDao {
     private static final String SQL_STATEMENT_FOR_GETTING_ORDER = "select * from orders left join order2orderItem on orders.id = order2orderItem.orderId where orders.id = ?";
     private static final String SQL_STATEMENT_FOR_GETTING_ORDERS = "select * from orders left join order2orderItem on orders.id = order2orderItem.orderId";
-    private static final String SQL_STATEMENT_FOR_DELETING_ORDER = "delete from orders where id = ?";
+    private static final String SQL_STATEMENT_FOR_SETTING_ORDER_STATUS = "update orders set status = ? where id = ?";
     private final JdbcTemplate jdbcTemplate;
     private PhoneDao phoneDao;
     private ResultSetExtractor<Order> orderListResultSetExtractor;
@@ -76,8 +76,7 @@ public class JdbcOrderDao implements OrderDao {
     }
 
     @Override
-    public void updateOrder(Order order) {
-        jdbcTemplate.update(SQL_STATEMENT_FOR_DELETING_ORDER, order.getId());
-        addOrder(order);
+    public void updateOrderStatus(Order order) {
+        jdbcTemplate.update(SQL_STATEMENT_FOR_SETTING_ORDER_STATUS, order.getStatus().toString(), order.getId());
     }
 }

@@ -9,5 +9,5 @@ public interface OrderDao {
     Optional<Order> getOrder(Long id);
     void addOrder(Order order);
     List<Order> getAllOrders();
-    void updateOrder(Order order);
+    void updateOrderStatus(Order order);
 }
