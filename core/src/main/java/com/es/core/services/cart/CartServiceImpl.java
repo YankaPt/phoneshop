@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -28,13 +30,21 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void update(Map<Long, Integer> items) {
-        throw new UnsupportedOperationException("TODO");
+        List<CartItem> cartItems = cart.getCartItems();
+        items.forEach(((phoneId, quantity) -> {
+            CartItem currentItem = cartItems.stream().filter(cartItem -> cartItem.getPhoneId().equals(phoneId)).findFirst().get();
+            if (isAvailability(phoneId, quantity)) {
+                currentItem.setQuantity(quantity);
+            } else {
+                currentItem.setQuantity(stockDao.getStockFor(phoneId));
+            }
+        }));
     }
 
     @Override
     public void remove(Long phoneId) {
-        CartItem removableCartItem = cart.getCartItems().stream().filter(cartItem -> cartItem.getPhoneId().equals(phoneId)).findFirst().get();
-        cart.getCartItems().remove(removableCartItem);
+        Optional<CartItem> removableCartItem = cart.getCartItems().stream().filter(cartItem -> cartItem.getPhoneId().equals(phoneId)).findFirst();
+        removableCartItem.ifPresent(cartItem -> cart.getCartItems().remove(cartItem));
     }
 
     @Override
@@ -47,8 +57,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addPhone(Long phoneId, Integer quantity) throws OutOfStockException{
-        if(isAvailability(phoneId, quantity)) {
+    public void addPhone(Long phoneId, Integer quantity) throws OutOfStockException {
+        if (isAvailability(phoneId, quantity)) {
             if (cart.getCartItems().stream().anyMatch(cartItem -> cartItem.getPhoneId().equals(phoneId))) {
                 increasePhoneQuantity(cart, phoneId, quantity);
             } else {
@@ -61,9 +71,9 @@ public class CartServiceImpl implements CartService {
     }
 
     private void increasePhoneQuantity(Cart cart, Long phoneId, Integer quantity) throws OutOfStockException {
-        if(isAvailability(phoneId, quantity)) {
+        if (isAvailability(phoneId, quantity)) {
             CartItem cartItem = cart.getCartItems().get(getIndexOf(phoneId, quantity));
-            cartItem.setQuantity(cartItem.getQuantity()+quantity);
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
             throw new OutOfStockException();
         }

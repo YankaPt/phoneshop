@@ -19,6 +19,9 @@
 <p>
     Hello from product list!
 </p>
+<form action="<c:url value="cart"/>">
+    <button>to Cart</button>
+</form>
 <div id="result"></div>
 <p>
     Found
@@ -28,11 +31,16 @@
         <form method="post" class="search-form">
             <div class="form-group has-feedback">
                 <label for="search" class="sr-only">Search</label>
-                <input type="text" class="form-control" name="search" id="search" placeholder="search">
+                <input type="text"  class="form-control noEnterSubmit" name="search" id="search" placeholder="search">
                 <span class="glyphicon glyphicon-search form-control-feedback"></span>
                 <button type="button"
                         onclick="doSearch(document.getElementById('search').value)">Search!
                 </button>
+                <script>
+                    $('.noEnterSubmit').keypress(function(e){
+                    if ( e.which == 13 ) e.preventDefault();
+                });
+                </script>
             </div>
         </form>
     </div>
@@ -43,37 +51,37 @@
             <ul class="pagination justify-content-end">
                 <li class="page-item">
                     <a class="page-link"
-                       href="?pageNumber=${empty pageNumber ? pageContext.request.getParameter("pageNumber") : pageNumber}&previousPage=true">Previous</a>
+                       href="?pageNumber=${empty pageNumber ? pageContext.request.getParameter("pageNumber") : pageNumber}&previousPage=true&orderBy=${orderBy}&isAscend=${isAscend}">Previous</a>
                 </li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=1">1</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=2">2</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=3">3</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=4">4</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=5">5</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=6">6</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=7">7</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=8">8</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=9">9</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(1, '${orderBy}', '${isAscend}')">1</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(2, '${orderBy}', '${isAscend}')">2</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(3, '${orderBy}', '${isAscend}')">3</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(4, '${orderBy}', '${isAscend}')">4</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(5, '${orderBy}', '${isAscend}')">5</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(6, '${orderBy}', '${isAscend}')">6</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(7, '${orderBy}', '${isAscend}')">7</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(8, '${orderBy}', '${isAscend}')">8</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(9, '${orderBy}', '${isAscend}')">9</a></li>
                 <li class="page-item"><a class="page-link disabled">...</a></li>
-                <li class="page-item"><a class="page-link" href="?pageNumber=${maxPageNumber}">${maxPageNumber}</a></li>
+                <li class="page-item"><a class="page-link" onclick="doSort(${maxPageNumber}, '${orderBy}', '${isAscend}')">${maxPageNumber}</a></li>
                 <li class="page-item">
                     <a class="page-link"
-                       href="?pageNumber=${empty pageNumber ? pageContext.request.getParameter("pageNumber") : pageNumber}&nextPage=true">Next</a>
+                       href="?pageNumber=${empty pageNumber ? pageContext.request.getParameter("pageNumber") : pageNumber}&nextPage=true&orderBy=${orderBy}&isAscend=${isAscend}">Next</a>
                 </li>
             </ul>
         </nav>
     </div>
     <div class="table-responsive">
-        <table id="table" class="table table-striped table-bordered table-hover table-sm sortable" cellspacing="0"
+        <table id="table" class="table table-striped table-bordered table-hover table-sm" cellspacing="0"
                width="100%">
             <thead>
             <tr>
                 <th>Image</th>
-                <th>Brand</th>
-                <th>Model</th>
+                <th><a onclick='doSort(${pageNumber}, "brand", ${isAscend}, true)'>Brand</a></th>
+                <th><a onclick='doSort(${pageNumber}, "model", ${isAscend}, true)'>Model</a></th>
                 <th>Color</th>
-                <th>Display size</th>
-                <th>Price</th>
+                <th><a onclick='doSort(${pageNumber}, "displaySizeInches", ${isAscend}, true)'>Display size</a></th>
+                <th><a onclick='doSort(${pageNumber}, "price", ${isAscend}, true)'>Price</a></th>
                 <th>Quantity</th>
                 <th>Action</th>
             </tr>
@@ -82,7 +90,7 @@
             <c:forEach var="phone" items="${phones}">
                 <tr>
                     <td>
-                        <img src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}">
+                        <a href="productDetails?phoneId=${phone.id}"><img src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}"></a>
                     </td>
                     <td>${phone.brand}</td>
                     <td>${phone.model}</td>

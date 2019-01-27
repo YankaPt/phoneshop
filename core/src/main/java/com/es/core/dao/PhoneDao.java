@@ -12,6 +12,8 @@ public interface PhoneDao {
 
     List<Phone> findAllAvailable(int offset, int limit);
 
+    List<Phone> findAllAvailableWithOrderBy(int offset, int limit, String orderBy, boolean isAscend);
+
     Long getTotalAmountOfAvailablePhones();
 
     List<Phone> findAllByKeyword(String keyword);

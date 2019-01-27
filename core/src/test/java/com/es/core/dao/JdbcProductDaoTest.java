@@ -30,8 +30,13 @@ public class JdbcProductDaoTest {
     private static final String SQL_QUERY_FOR_GETTING_PHONES = "select * from phones";
     private static final String SQL_QUERY_FOR_SETTING_STOCK = "insert into stocks (phoneId, stock, reserved) values (?,?,?)";
     private static final String SQL_QUERY_FOR_UPDATING_STOCK = "update stocks set stock=?, reserved=? where phoneId=?";
+    private static final String ORDER_BY = "brand";
+    private static final boolean IS_ASCEND = true;
     private static final Integer INITIAL_PHONE_STOCK_VALUE = 5;
     private static final Integer INITIAL_PHONE_RESERVED_VALUE = 1;
+    private static final BigDecimal PHONE_PRICE = BigDecimal.ONE;
+    private static final String NULL_STOCK_MODEL = "NullStockModel";
+    private static final String NULL_STOCK_BRAND = "NullStockBrand";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -48,7 +53,7 @@ public class JdbcProductDaoTest {
         initialPhone.setId(999L);
         initialPhone.setBrand("TestBrand");
         initialPhone.setModel("testModel");
-        initialPhone.setPrice(BigDecimal.ONE);
+        initialPhone.setPrice(PHONE_PRICE);
         initialPhone.setColors(new HashSet<>());
         initialPhone.getColors().add(black);
         initialPhone.getColors().add(white);
@@ -85,12 +90,27 @@ public class JdbcProductDaoTest {
     }
 
     @Test
+    public void shouldFindOnlyWithPositiveStockWithOrderBy() {
+        Phone phoneWithNullStock = new Phone();
+        phoneWithNullStock.setId(998L);
+        phoneWithNullStock.setBrand(NULL_STOCK_BRAND);
+        phoneWithNullStock.setModel(NULL_STOCK_MODEL);
+        phoneWithNullStock.setPrice(PHONE_PRICE);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, phoneWithNullStock.getId(), phoneWithNullStock.getBrand(), phoneWithNullStock.getModel(), phoneWithNullStock.getPrice());
+
+        List<Phone> phones = productDao.findAllAvailableWithOrderBy(0, 5, ORDER_BY, IS_ASCEND);
+
+        assertEquals(1, phones.size());
+        assertNotEquals(phoneWithNullStock.getBrand(), phones.get(0).getBrand());
+    }
+
+    @Test
     public void shouldFindOnlyWithPositiveStock() {
         Phone phoneWithNullStock = new Phone();
         phoneWithNullStock.setId(998L);
-        phoneWithNullStock.setBrand("NullStockBrand");
-        phoneWithNullStock.setModel("NullStockModel");
-        phoneWithNullStock.setPrice(BigDecimal.ONE);
+        phoneWithNullStock.setBrand(NULL_STOCK_BRAND);
+        phoneWithNullStock.setModel(NULL_STOCK_MODEL);
+        phoneWithNullStock.setPrice(PHONE_PRICE);
         jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, phoneWithNullStock.getId(), phoneWithNullStock.getBrand(), phoneWithNullStock.getModel(), phoneWithNullStock.getPrice());
 
         List<Phone> phones = productDao.findAllAvailable(0, 5);
@@ -114,7 +134,7 @@ public class JdbcProductDaoTest {
         phone2.setId(998L);
         phone2.setBrand("TestBrand2");
         phone2.setModel("testModel2");
-        phone2.setPrice(BigDecimal.ONE);
+        phone2.setPrice(PHONE_PRICE);
         jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, phone2.getId(), phone2.getBrand(), phone2.getModel(), phone2.getPrice());
         jdbcTemplate.update(SQL_QUERY_FOR_SETTING_STOCK, phone2.getId(), 5, 1);
 
@@ -153,7 +173,7 @@ public class JdbcProductDaoTest {
 
     @Test
     public void shouldFindByBrand() {
-        String keyword = "TestBrand";
+        String keyword = "TestBran";
 
         List<Phone> phones = productDao.findAllByKeyword(keyword);
 
