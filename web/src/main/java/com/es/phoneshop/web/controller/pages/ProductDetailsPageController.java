@@ -30,7 +30,7 @@ public class ProductDetailsPageController {
     @GetMapping()
     public String showProduct(Long phoneId, Model model) {
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
-        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         if (phoneId != null) {
             Optional<Phone> phone = phoneService.get(phoneId);
             phone.ifPresent(p -> model.addAttribute("phone", p));

@@ -1,28 +1,24 @@
 package com.es.core.model.order;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public class Order
-{
+public class Order {
     private Long id;
+    private OrderStatus status;
+
     private List<OrderItem> orderItems;
-    /**
-     *  A sum of order item prices;
-     */
     private BigDecimal subtotal;
     private BigDecimal deliveryPrice;
-    /**
-     * <code>subtotal</code> + <code>deliveryPrice</code>
-     */
     private BigDecimal totalPrice;
 
     private String firstName;
     private String lastName;
     private String deliveryAddress;
     private String contactPhoneNo;
-
-    private OrderStatus status;
+    private String additionalInformation;
 
     public Long getId() {
         return id;
@@ -102,5 +98,26 @@ public class Order
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

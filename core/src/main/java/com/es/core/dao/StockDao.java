@@ -1,7 +1,11 @@
 package com.es.core.dao;
 
+import com.es.core.model.order.OrderItem;
+
+import java.util.List;
+
 public interface StockDao {
     Integer getStockFor(Long key);
 
-    void updateReservationFor(Long key, Integer quantity);
+    void reserveOrderItems(List<OrderItem> orderItems);
 }

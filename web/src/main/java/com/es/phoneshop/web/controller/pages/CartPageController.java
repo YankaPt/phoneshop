@@ -43,8 +43,11 @@ public class CartPageController {
 
     @GetMapping
     public String getCart(Model model) {
+        List cartItems = cartService.getCart().getCartItems();
+        if (cartItems.isEmpty()) {
+            return "emptyCart";
+        }
         List<Phone> phones = new ArrayList<>();
-        List cartItems;
         if (model.containsAttribute("oldCartItems")) {
             cartItems = (List) model.asMap().get("oldCartItems");
             cartItems.forEach(cartItem -> phones.add(phoneService.get(((CartItemWithQuantityAsString) cartItem).getPhoneId()).get()));
@@ -57,7 +60,7 @@ public class CartPageController {
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("phones", phones);
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
-        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts());
+        model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         return "cart";
     }
 

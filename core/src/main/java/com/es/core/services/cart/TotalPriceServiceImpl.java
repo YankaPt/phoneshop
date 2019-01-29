@@ -10,17 +10,15 @@ import java.math.BigDecimal;
 
 @Service
 public class TotalPriceServiceImpl implements TotalPriceService {
-    private final Cart cart;
     private final PhoneDao phoneDao;
 
     @Autowired
-    public TotalPriceServiceImpl(Cart cart, PhoneDao phoneDao) {
-        this.cart = cart;
+    public TotalPriceServiceImpl(PhoneDao phoneDao) {
         this.phoneDao = phoneDao;
     }
 
     @Override
-    public BigDecimal getTotalPriceOfProducts() {
+    public BigDecimal getTotalPriceOfProducts(Cart cart) {
         BigDecimal totalCartPrice = BigDecimal.ZERO;
         for (CartItem cartItem : cart.getCartItems()) {
             totalCartPrice = totalCartPrice.add(phoneDao.get(cartItem.getPhoneId()).get().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));

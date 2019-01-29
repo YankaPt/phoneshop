@@ -5,15 +5,11 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="<c:url value="/resources/styles/cartPage_styles.css"/>">
-    <script src="webjars/jquery/3.0.0/jquery.min.js"></script>
-    <script src="webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="<c:url value="/resources/scripts/CartPage_scripts.js"/>"></script>
     <title>Product list</title>
 </head>
 <body>
-<div id="cart" class="minicart">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
+<jsp:include page="header.jsp"/>
 <p>
     Hello from Cart!
 </p>
@@ -42,7 +38,7 @@
                 <tr>
                     <td>${phone.brand}</td>
                     <td>
-                            ${phone.model}
+                        ${phone.model}
                         <br>
                         <a href="productDetails?phoneId=${phone.id}">More...</a>
                     </td>
@@ -71,9 +67,17 @@
         </table>
     </div>
 </form>
-<form:form method="PUT">
-    <input type="submit" id="updateSubmit" onclick="update()" value="update"/>
-</form:form>
+<div class="row">
+    <div class="col-md-11"></div>
+    <div class="col-md-1">
+        <form:form method="PUT">
+            <input type="submit" id="updateSubmit" onclick="update()" value="update"/>
+        </form:form>
+        <form action="<c:url value="order"/>">
+            <button>To Order!</button>
+        </form>
+    </div>
+</div>
 </p>
 </body>
 </html>
