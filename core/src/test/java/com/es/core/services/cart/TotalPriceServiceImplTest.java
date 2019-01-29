@@ -4,10 +4,13 @@ import com.es.core.dao.PhoneDao;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Phone;
-import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +22,7 @@ public class TotalPriceServiceImplTest {
     private static final long PHONE_ID = 1L;
     private static final BigDecimal PHONE_PRICE = BigDecimal.ONE;
     private static final int CART_ITEM_QUANTITY = 3;
-    private PhoneDao phoneDao = mock(PhoneDao.class);
+    PhoneDao phoneDao = mock(PhoneDao.class);
     private TotalPriceService totalPriceService = new TotalPriceServiceImpl(phoneDao);
 
     @Test

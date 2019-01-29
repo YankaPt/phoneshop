@@ -19,7 +19,7 @@ public class JdbcOrderDao implements OrderDao {
     private final JdbcTemplate jdbcTemplate;
     private PhoneDao phoneDao;
     private ResultSetExtractor<Order> orderListResultSetExtractor;
-
+  
     @Autowired
     public JdbcOrderDao(JdbcTemplate jdbcTemplate, PhoneDao phoneDao) {
         this.jdbcTemplate = jdbcTemplate;

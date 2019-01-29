@@ -45,7 +45,6 @@ public class CartPageController {
     @GetMapping
     public String getCart(Model model, Authentication authentication) {
         List<Phone> phones = new ArrayList<>();
-        List cartItems;
         if (model.containsAttribute("oldCartItems")) {
             cartItems = (List) model.asMap().get("oldCartItems");
             cartItems.forEach(cartItem -> phones.add(phoneService.get(((CartItemWithQuantityAsString) cartItem).getPhoneId()).get()));
