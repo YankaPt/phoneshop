@@ -9,6 +9,9 @@
 <H4>
     Orders
 </H4>
+<form action="<c:url value="../productList"/>">
+    <button>Back to Product List</button>
+</form>
 <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered table-hover table-sm" cellspacing="0"
            width="100%">

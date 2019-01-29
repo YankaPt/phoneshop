@@ -19,4 +19,5 @@
 
     <import resource="classpath:context/applicationContext-core.xml"/>
     <import resource="classpath:context/applicationContext-demoda.xml"/>
+    <import resource="webSecurityConfig.xml"/>
 </beans>

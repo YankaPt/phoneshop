@@ -6,6 +6,7 @@ import com.es.core.services.cart.CartService;
 import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -32,11 +33,16 @@ public class CartPageController {
         this.phoneService = phoneService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String getCart(Model model) {
+    @GetMapping
+    public String getCart(Model model, Authentication authentication) {
         List<CartItem> cartItems = cartService.getCart().getCartItems();
         if (cartItems.isEmpty()) {
             return "emptyCart";
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            model.addAttribute("userName", authentication.getName());
+        } else {
+            model.addAttribute("userName", null);
         }
         List<Phone> phones = new ArrayList<>();
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());

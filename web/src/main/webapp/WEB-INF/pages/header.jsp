@@ -9,9 +9,25 @@
 </head>
 <body>
 <p>
-<form class="minicart" action="<c:url value="/admin/orders"/>">
-    <button>admin</button>
-</form>
+<div class="minicart">
+    <c:if test="${userName == null}">
+        <form action="<c:url value='/login'/>">
+            <button>login</button>
+        </form>
+    </c:if>
+    <c:if test="${userName != null}">
+        ${userName}
+        <form action="<c:url value='/security_logout'/>">
+            <button>logout</button>
+        </form>
+        <c:if test="${userName == 'admin'}">
+            <form action="<c:url value='/admin/orders'/>">
+                <button>admin</button>
+            </form>
+        </c:if>
+    </c:if>
+</div>
+
 </p>
 <div id="cart" class="minicart">My cart: ${cartItemsAmount} items $${cartItemsPrice}</div>
 </body>
