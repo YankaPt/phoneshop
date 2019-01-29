@@ -11,6 +11,7 @@ import com.es.phoneshop.web.validators.CustomerValidator;
 import com.es.phoneshop.web.validators.OrderValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,6 +33,7 @@ public class OrderPageControllerTest {
     private Cart cart = new Cart();
     private List<CartItem> cartItems = new ArrayList<>();
     private Model model = mock(Model.class);
+    private Authentication authentication = mock(Authentication.class);
     private Customer customer = new Customer();
     private RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
     private OrderService orderService = mock(OrderService.class);
@@ -55,7 +57,7 @@ public class OrderPageControllerTest {
 
     @Test
     public void shouldGetOrder() {
-        String result = controller.getOrder(model);
+        String result = controller.getOrder(model, authentication);
 
         verify(model).addAttribute(CART_ITEMS_ATTRIBUTE, cartItems);
         assertEquals(ORDER_VIEW, result);

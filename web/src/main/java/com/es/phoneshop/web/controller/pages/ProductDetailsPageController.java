@@ -4,6 +4,7 @@ import com.es.core.model.phone.Phone;
 import com.es.core.services.cart.CartService;
 import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
+import com.es.phoneshop.web.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,7 @@ public class ProductDetailsPageController {
             Optional<Phone> phone = phoneService.get(phoneId);
             phone.ifPresent(p -> model.addAttribute("phone", p));
         } else {
-            return "redirect:/404page";
+            return Constants.REDIRECTING_TO_404_ADDRESS;
         }
         if (authentication != null && authentication.isAuthenticated()) {
             model.addAttribute("userName", authentication.getName());

@@ -5,6 +5,7 @@
 <!doctype html>
 <html>
 <head>
+    <link rel="stylesheet" href="<c:url value="/resources/styles/cartPage_styles.css"/>">
     <script src="<c:url value="/resources/scripts/CartPage_scripts.js"/>"></script>
     <title>Cart</title>
 </head>
@@ -50,13 +51,15 @@
                     <td>${phone.displaySizeInches}"</td>
                     <td>$ ${phone.price}</td>
                     <td>
-                        <input type="text" class="quantityField" id=quantity${phone.id} name="quantity${phone.id}"
-                               style="text-align: right" value="${cartItems.get(status.index).quantity}"/>
+                        <input type="text" class="quantity-field" id=quantity${phone.id} name="quantity${phone.id}"
+                                value="${cartItems.get(status.index).quantity}"/>
                         <br>
-                        <label for=quantity${phone.id} id=label${phone.id}></label>
+                        <c:if test="${errors.containsKey(phone.id)}">
+                            <label for=quantity${phone.id} class="error-message" id=label${phone.id}>${errors.get(phone.id)}</label>
+                        </c:if>
                     </td>
                     <td>
-                        <input type="hidden" disabled id="delete${phone.id}" name="delete">
+                        <input type="hidden" disabled id="delete${phone.id}" name="delete"/>
                         <input type="submit" onclick="deleteItem(${phone.id})" value="Delete"/>
                     </td>
                 </tr>

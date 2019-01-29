@@ -19,7 +19,7 @@ public class TotalPriceServiceImplTest {
     private static final long PHONE_ID = 1L;
     private static final BigDecimal PHONE_PRICE = BigDecimal.ONE;
     private static final int CART_ITEM_QUANTITY = 3;
-    PhoneDao phoneDao = mock(PhoneDao.class);
+    private PhoneDao phoneDao = mock(PhoneDao.class);
     private TotalPriceService totalPriceService = new TotalPriceServiceImpl(phoneDao);
 
     @Test

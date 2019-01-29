@@ -10,6 +10,8 @@ public interface PhoneService {
 
     List<Phone> getPhonesByKeyword(String keyword);
 
+    List<Phone> getPhonesWithPositiveStockWithOrderBy(int offset, int limit, String orderBy, boolean isAscend);
+
     Long getTotalAmountOfPhonesWithPositiveStock();
 
     Optional<Phone> get(Long key);
