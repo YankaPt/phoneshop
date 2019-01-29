@@ -32,7 +32,8 @@ public class JdbcOrderDaoTest {
     private static final String SQL_QUERY_FOR_GETTING_ORDER = "select * from orders where id = ?";
     private static final String SQL_QUERY_FOR_GETTING_ORDER_ITEMS = "select * from order2orderItem where orderId = ?";
     private static final String SQL_QUERY_FOR_CLEAR_ORDERS = "delete from orders";
-    private static final long ORDER_ID = 1L;
+    private static final long FIRST_ORDER_ID = 1L;
+    private static final long SECOND_ORDER_ID = 2L;
     private static final OrderStatus STATUS = OrderStatus.NEW;
     private static final BigDecimal SUBTOTAL = BigDecimal.ONE;
     private static final BigDecimal DELIVERY_PRICE = BigDecimal.ZERO;
@@ -61,8 +62,10 @@ public class JdbcOrderDaoTest {
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_PHONES);
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_ORDERS);
         jdbcTemplate.update(SQL_QUERY_FOR_INSERT_PHONE, initialPhone.getId(), initialPhone.getBrand(), initialPhone.getModel(), initialPhone.getPrice());
-        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NO);
-        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER_ITEM, ORDER_ID, initialPhone.getId(), INITIAL_PHONE_QUANTITY);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, FIRST_ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NO);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER_ITEM, FIRST_ORDER_ID, initialPhone.getId(), INITIAL_PHONE_QUANTITY);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER, SECOND_ORDER_ID, STATUS.toString(), SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NO);
+        jdbcTemplate.update(SQL_QUERY_FOR_INSERT_ORDER_ITEM, SECOND_ORDER_ID, initialPhone.getId(), INITIAL_PHONE_QUANTITY);
         when(phoneDao.get(initialPhone.getId())).thenReturn(Optional.of(initialPhone));
     }
 
@@ -75,7 +78,7 @@ public class JdbcOrderDaoTest {
 
     @Test
     public void shouldReturnCorrectOrder() {
-        Optional<Order> order = orderDao.getOrder(ORDER_ID);
+        Optional<Order> order = orderDao.getOrder(FIRST_ORDER_ID);
 
         assertTrue(order.isPresent());
         assertEquals(FIRST_NAME, order.get().getFirstName());
@@ -86,17 +89,7 @@ public class JdbcOrderDaoTest {
     @Test
     public void shouldAddOrder() {
         jdbcTemplate.update(SQL_QUERY_FOR_CLEAR_ORDERS);
-        Order order = new Order();
-        order.setId(ORDER_ID);
-        order.setStatus(STATUS);
-        order.setSubtotal(SUBTOTAL);
-        order.setDeliveryPrice(DELIVERY_PRICE);
-        order.setTotalPrice(TOTAL_PRICE);
-        order.setFirstName(FIRST_NAME);
-        order.setLastName(LAST_NAME);
-        order.setDeliveryAddress(DELIVERY_ADDRESS);
-        order.setContactPhoneNo(CONTACT_PHONE_NO);
-        order.setOrderItems(orderItems);
+        Order order = initializeOrder(FIRST_ORDER_ID, STATUS, orderItems, SUBTOTAL, DELIVERY_PRICE, TOTAL_PRICE, FIRST_NAME, LAST_NAME, DELIVERY_ADDRESS, CONTACT_PHONE_NO, null);
 
         orderDao.addOrder(order);
         Order actualOrder = jdbcTemplate.queryForObject(SQL_QUERY_FOR_GETTING_ORDER, new BeanPropertyRowMapper<>(Order.class), order.getId());
@@ -105,5 +98,31 @@ public class JdbcOrderDaoTest {
         assertEquals(order, actualOrder);
         assertEquals(order.getFirstName(), actualOrder.getFirstName());
         assertEquals(1, actualOrderItemsList.size());
+    }
+
+    private Order initializeOrder(long orderId, OrderStatus status, List<OrderItem> orderItems, BigDecimal subtotal, BigDecimal deliveryPrice, BigDecimal totalPrice,
+                                  String firstName, String lastName, String deliveryAddress, String contactPhoneNo, String additionalInfo) {
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(status);
+        order.setSubtotal(subtotal);
+        order.setDeliveryPrice(deliveryPrice);
+        order.setTotalPrice(totalPrice);
+        order.setFirstName(firstName);
+        order.setLastName(lastName);
+        order.setDeliveryAddress(deliveryAddress);
+        order.setContactPhoneNo(contactPhoneNo);
+        order.setOrderItems(orderItems);
+        order.setAdditionalInformation(additionalInfo);
+        return order;
+    }
+
+    @Test
+    public void shouldReturnAllOrders() {
+        List<Order> orderList = orderDao.getAllOrders();
+
+        assertEquals(2, orderList.size());
+        assertEquals(FIRST_ORDER_ID, (long) orderList.get(0).getId());
+        assertEquals(SECOND_ORDER_ID, (long) orderList.get(1).getId());
     }
 }

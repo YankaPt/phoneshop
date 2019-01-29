@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface StockDao {
     Integer getStockFor(Long key);
-
     void reserveOrderItems(List<OrderItem> orderItems);
+    void unrollReservationForOrderItems(List<OrderItem> orderItems);
+    void removeReservationForOrderItems(List<OrderItem> orderItems);
 }

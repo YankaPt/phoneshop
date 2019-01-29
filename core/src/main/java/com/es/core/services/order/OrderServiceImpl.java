@@ -5,6 +5,8 @@ import com.es.core.dao.StockDao;
 import com.es.core.exceptions.OutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
+import com.es.core.model.order.OrderStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -63,5 +66,21 @@ public class OrderServiceImpl implements OrderService {
             throw new OutOfStockException();
         }
         transactionManager.commit(status);
+    }
+
+    @Override
+    public List<Order> getAllOrders() {
+        return orderDao.getAllOrders();
+    }
+
+    @Override
+    public void updateOrderStatus(Order order) {
+        orderDao.updateOrderStatus(order);
+        OrderStatus status = order.getStatus();
+        if (status.equals(OrderStatus.DELIVERED)) {
+            stockDao.removeReservationForOrderItems(order.getOrderItems());
+        } else if (status.equals(OrderStatus.REJECTED)) {
+            stockDao.unrollReservationForOrderItems(order.getOrderItems());
+        }
     }
 }

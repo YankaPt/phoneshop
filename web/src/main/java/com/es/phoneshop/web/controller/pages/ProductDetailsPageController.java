@@ -6,6 +6,7 @@ import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class ProductDetailsPageController {
     }
 
     @GetMapping()
-    public String showProduct(Long phoneId, Model model) {
+    public String showProduct(Long phoneId, Model model, Authentication authentication) {
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
         model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
         if (phoneId != null) {
@@ -36,6 +37,11 @@ public class ProductDetailsPageController {
             phone.ifPresent(p -> model.addAttribute("phone", p));
         } else {
             return Constants.REDIRECTING_TO_404_ADDRESS;
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            model.addAttribute("userName", authentication.getName());
+        } else {
+            model.addAttribute("userName", null);
         }
         return "productDetails";
     }

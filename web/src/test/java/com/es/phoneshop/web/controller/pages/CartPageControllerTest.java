@@ -12,6 +12,7 @@ import com.es.phoneshop.web.services.ErrorLocalizer;
 import com.es.phoneshop.web.services.ErrorsWrapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 public class CartPageControllerTest {
     private static final String CART_PAGE_VIEW = "cart";
+    private static final String EMPTY_CART_PAGE_VIEW = "emptyCart";
     private static final String REDIRECTING_ADDRESS = "redirect:/cart";
     private static final String LOCALE_ATTRIBUTE = "locale";
     private static final String OLD_CART_ITEMS_ATTRIBUTE = "oldCartItems";
@@ -37,6 +39,7 @@ public class CartPageControllerTest {
     private CartItem secondItem = new CartItem(SECOND_ITEM_PHONE_ID, SECOND_ITEM_QUANTITY);
     private List<CartItemWithQuantityAsString> cartItemsWithStringQuantity = new ArrayList<>();
     private Model model = spy(Model.class);
+    private Authentication authentication = mock(Authentication.class);
     private RedirectAttributes redirectAttributes = spy(RedirectAttributes.class);
     private CartService cartService = mock(CartService.class);
     private PhoneService phoneService = mock(PhoneService.class);
@@ -77,9 +80,9 @@ public class CartPageControllerTest {
     }
 
     @Test
-    public void shouldReturnCart() {
-        String actualReturnedValue = controller.getCart(model);
+    public void shouldReturnEmptyCart() {
+        String actualReturnedValue = controller.getCart(model, authentication);
 
-        assertEquals(CART_PAGE_VIEW, actualReturnedValue);
+        assertEquals(EMPTY_CART_PAGE_VIEW, actualReturnedValue);
     }
 }

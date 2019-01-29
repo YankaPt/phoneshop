@@ -13,6 +13,7 @@ import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.validators.CustomerValidator;
 import com.es.phoneshop.web.validators.OrderValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,9 +47,14 @@ public class OrderPageController {
     }
 
     @GetMapping
-    public String getOrder(Model model) {
+    public String getOrder(Model model, Authentication authentication) {
         if (model.containsAttribute("errors")) {
             model.addAttribute("errors", model.asMap().get("errors"));
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            model.addAttribute("userName", authentication.getName());
+        } else {
+            model.addAttribute("userName", null);
         }
         List<CartItem> cartItems = cartService.getCart().getCartItems();
         List<Phone> phones = new ArrayList<>();

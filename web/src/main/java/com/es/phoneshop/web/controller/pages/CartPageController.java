@@ -11,6 +11,7 @@ import com.es.phoneshop.web.services.CartItemsConverter;
 import com.es.phoneshop.web.services.ErrorLocalizer;
 import com.es.phoneshop.web.services.ErrorsWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -42,11 +43,7 @@ public class CartPageController {
     }
 
     @GetMapping
-    public String getCart(Model model) {
-        List cartItems = cartService.getCart().getCartItems();
-        if (cartItems.isEmpty()) {
-            return "emptyCart";
-        }
+    public String getCart(Model model, Authentication authentication) {
         List<Phone> phones = new ArrayList<>();
         if (model.containsAttribute("oldCartItems")) {
             cartItems = (List) model.asMap().get("oldCartItems");
@@ -57,10 +54,18 @@ public class CartPageController {
             cartItems = cartService.getCart().getCartItems();
             cartItems.forEach(cartItem -> phones.add(phoneService.get(((CartItem) cartItem).getPhoneId()).get()));
         }
-        model.addAttribute("cartItems", cartItems);
-        model.addAttribute("phones", phones);
+        if (cartItems.isEmpty()) {
+            return "emptyCart";
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            model.addAttribute("userName", authentication.getName());
+        } else {
+            model.addAttribute("userName", null);
+        }
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
         model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));
+        model.addAttribute("phones", phones);
+        model.addAttribute("cartItems", cartItems);
         return "cart";
     }
 

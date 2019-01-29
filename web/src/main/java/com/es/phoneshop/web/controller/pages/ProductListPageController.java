@@ -5,6 +5,7 @@ import com.es.core.services.cart.TotalPriceService;
 import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.services.ProductListPageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,17 @@ public class ProductListPageController {
     }
 
     @GetMapping()
-    public String showProductList(Integer pageNumber, Boolean previousPage, Boolean nextPage, String search, String orderBy, boolean isAscend, Model model) {
+    public String showProductList(Integer pageNumber, Boolean previousPage, Boolean nextPage, String search, String orderBy, boolean isAscend, Model model, Authentication authentication) {
         if (search != null) {
             model.addAttribute("phones", productListPageService.findPhonesBySearch(search));
         } else {
             pageNumber = productListPageService.resolveParamsAndGetPage(pageNumber, previousPage, nextPage);
             model.addAttribute("phones", productListPageService.findPhonesForCurrentPage(pageNumber, AMOUNT_OF_SHOWED_PRODUCTS, orderBy, isAscend));
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            model.addAttribute("userName", authentication.getName());
+        } else {
+            model.addAttribute("userName", null);
         }
         model.addAttribute("cartItemsAmount", cartService.getQuantityOfProducts());
         model.addAttribute("cartItemsPrice", totalPriceService.getTotalPriceOfProducts(cartService.getCart()));

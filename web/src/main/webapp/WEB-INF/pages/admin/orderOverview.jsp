@@ -1,25 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!doctype html>
 <html>
 <head>
-    <title>Order ${order.id}</title>
-    <link rel="stylesheet" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <title>${order.id}</title>
+    <link rel="stylesheet" href="../../webjars/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="<c:url value="/resources/styles/admin/orderOverview_styles.css"/>">
 </head>
 <body>
 <p>
-    Thank you for your Order!
-</p>
-<p>
     Order number: ${order.id}
 </p>
-<form action="<c:url value="productList"/>">
-    <button>Back to Product list</button>
-</form>
-<p>
-
+<p class="status">
+    Status: ${order.status}
+</p>
 <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered table-hover table-sm" cellspacing="0"
            width="100%">
@@ -34,7 +27,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="orderItem" items="${order.orderItems}" varStatus="status">
+        <c:forEach var="orderItem" items="${order.orderItems}">
             <tr>
                 <td>${orderItem.phone.brand}</td>
                 <td>
@@ -76,25 +69,31 @@
         </table>
     </div>
 </div>
-    <table>
-        <tr>
-            <td>First name </td>
-            <td>${customer.firstName}</td>
-        </tr>
-        <tr>
-            <td>Last name </td>
-            <td>${customer.lastName}</td>
-        </tr>
-        <tr>
-            <td>Address </td>
-            <td>${customer.address}</td>
-        </tr>
-        <tr>
-            <td>Contact phone </td>
-            <td>${customer.contactNumber}</td>
-        </tr>
-    </table>
+<table>
+    <tr>
+        <td>First name </td>
+        <td>${customer.firstName}</td>
+    </tr>
+    <tr>
+        <td>Last name </td>
+        <td>${customer.lastName}</td>
+    </tr>
+    <tr>
+        <td>Address </td>
+        <td>${customer.address}</td>
+    </tr>
+    <tr>
+        <td>Contact phone </td>
+        <td>${customer.contactNumber}</td>
+    </tr>
+</table>
 <p>${customer.additionalInformation}</p>
-</p>
+<form action="<c:url value="/admin/orders"/>">
+    <button>Back</button>
+</form>
+<form method="post">
+    <input type="submit" <c:if test='${order.status != "NEW"}'> disabled </c:if> name="delivered" value="Delivered">
+    <input type="submit" <c:if test='${order.status != "NEW"}'> disabled </c:if> name="rejected" value="Rejected">
+</form>
 </body>
 </html>

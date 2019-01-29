@@ -7,6 +7,7 @@ import com.es.core.services.phone.PhoneService;
 import com.es.phoneshop.web.services.ProductListPageService;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class ProductListPageControllerTest {
 
     private List<Phone> phones = new ArrayList<>();
     private Model model = spy(Model.class);
+    private Authentication authentication = mock(Authentication.class);
     private CartService cartService = mock(CartService.class);
     private PhoneService phoneService = mock(PhoneService.class);
     private TotalPriceService totalPriceService = mock(TotalPriceService.class);
@@ -40,7 +42,7 @@ public class ProductListPageControllerTest {
 
     @Test
     public void shouldFindProducts() {
-        controller.showProductList(PAGE_NUMBER, IS_PREVIOUS_PAGE, IS_NEXT_PAGE, SEARCH, ORDER_BY, IS_ASCEND, model);
+        controller.showProductList(PAGE_NUMBER, IS_PREVIOUS_PAGE, IS_NEXT_PAGE, SEARCH, ORDER_BY, IS_ASCEND, model, authentication);
 
         verify(model).addAttribute("phones", phones);
         verify(model).addAttribute(PAGE_NUMBER_ATTRIBUTE, PAGE_NUMBER);

@@ -5,7 +5,7 @@
 <html>
 <head>
     <script src="<c:url value="/resources/scripts/PLP_scripts.js"/>"></script>
-    <title>Product list</title>
+    <title>${phone.brand} ${phone.model}</title>
 </head>
 <body>
 <jsp:include page="header.jsp"/>
