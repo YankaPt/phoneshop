@@ -37,14 +37,14 @@ public class QuickOrderFormValidator implements Validator {
             } else if (paramName.startsWith("code") && values.matches("\\d*")) {
                 if ("".equals(values)) {
                     errors.reject("code" + paramName, "field.required");
-                } else if (paramName.startsWith("code") && !isPhoneExist(paramName)) {
+                } else if (!isPhoneExist(values)) {
                     errors.reject("code"+paramName, "incorrectCode");
                 }
             }
         });
     }
-    private boolean isPhoneExist(String paramName) {
-        Long phoneId = Long.parseLong(paramName.substring("code".length()));
+    private boolean isPhoneExist(String value) {
+        Long phoneId = Long.parseLong(value);
         return phoneService.get(phoneId).isPresent();
     }
 }
