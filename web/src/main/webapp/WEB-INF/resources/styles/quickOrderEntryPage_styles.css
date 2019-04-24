@@ -1,0 +1,12 @@
+.error-message {
+    color: red;
+}
+.success-message {
+    color: green;
+}
+.quantity-field {
+    text-align: right;
+}
+.code-field {
+    text-align: right;
+}
